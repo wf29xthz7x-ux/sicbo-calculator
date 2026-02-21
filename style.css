@@ -1,0 +1,221 @@
+:root {
+  --bg-color: #f4f6f8;
+  --surface-color: #ffffff;
+  --text-primary: #1e293b;
+  --text-secondary: #64748b;
+  --text-muted: #94a3b8;
+  
+  --primary-blue: #3b82f6;
+  --primary-blue-hover: #2563eb;
+  --primary-blue-bg: #eff6ff;
+  
+  --success-green: #10b981;
+  --success-green-hover: #059669;
+  
+  --danger-red: #ef4444;
+  --danger-red-bg: #fef2f2;
+  --danger-red-border: #fecaca;
+  
+  --purple-roll: #8b5cf6;
+  --purple-roll-bg: #f5f3ff;
+  
+  --border-color: #e2e8f0;
+  --radius-lg: 12px;
+  --radius-md: 8px;
+  
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+}
+
+* { box-sizing: border-box; }
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background-color: var(--bg-color); 
+  color: var(--text-primary); 
+  padding: 15px;
+  margin: 0;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* 全域按鈕觸控優化：防放大、防反白、移除預設高光 */
+button {
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.app-header h2 { 
+  text-align: center; margin-top: 10px; margin-bottom: 24px; 
+  font-weight: 800; font-size: 24px;
+}
+
+.app-container {
+  display: flex; flex-wrap: wrap; gap: 20px;
+  max-width: 960px; margin: 0 auto;
+}
+
+.left-panel { flex: 1; min-width: 300px; display: flex; flex-direction: column; gap: 20px; }
+.right-panel { flex: 1.2; min-width: 320px; display: flex; flex-direction: column; gap: 20px; }
+
+.card {
+  background: var(--surface-color); padding: 24px;
+  border-radius: var(--radius-lg); border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-sm);
+}
+
+.balance-container { text-align: center; }
+.balance-title { font-size: 14px; color: var(--text-secondary); font-weight: 700; margin-bottom: 8px; }
+.balance-amount { font-size: 3.5em; font-weight: 800; letter-spacing: -1px; transition: color 0.3s; line-height: 1.2;}
+.positive { color: var(--success-green); } 
+.negative { color: var(--danger-red); } 
+.neutral { color: var(--text-primary); }
+
+/* 盈虧跳動動畫 (結算時觸發) */
+@keyframes pulseAmount {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.08); }
+  100% { transform: scale(1); }
+}
+.pulse-anim { animation: pulseAmount 0.35s ease-out; }
+
+.stats-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;
+  margin-top: 24px; padding-top: 24px; border-top: 1px solid #f1f5f9;
+}
+.stat-box { text-align: center; }
+.stat-title { font-size: 12px; color: var(--text-secondary); margin-bottom: 6px; font-weight: 600; }
+.stat-value { font-size: 16px; font-weight: 700; color: var(--text-primary); }
+.stat-value.win-text { color: var(--success-green); }
+.stat-value.lose-text { color: var(--danger-red); }
+
+.step-label { 
+  font-size: 15px; font-weight: 700; margin-bottom: 16px; 
+  color: var(--text-primary); display: flex; align-items: center; gap: 8px;
+}
+.step-num {
+  background: var(--primary-blue); color: white; width: 22px; height: 22px; 
+  display: inline-flex; align-items: center; justify-content: center; 
+  border-radius: 50%; font-size: 12px;
+}
+
+.history-header { font-size: 16px; font-weight: 700; margin-bottom: 16px; color: var(--text-primary); }
+
+.bet-options { display: flex; gap: 12px; }
+.bet-btn {
+  flex: 1; padding: 16px 0; font-size: 16px; font-weight: 700; min-height: 50px;
+  background: var(--surface-color); border: 1px solid var(--border-color); color: var(--text-secondary);
+  border-radius: var(--radius-md); cursor: pointer; transition: all 0.2s ease; font-family: inherit;
+}
+.bet-btn:active { transform: scale(0.96); background: #f8fafc; }
+.bet-btn.active { background: var(--primary-blue-bg); border-color: var(--primary-blue); color: var(--primary-blue); }
+
+.roll-btn {
+  width: 100%; margin-top: 12px; font-size: 15px; min-height: 50px;
+  display: flex; align-items: center; justify-content: center; gap: 8px; background: var(--surface-color);
+}
+.roll-btn.active { background: var(--purple-roll-bg); border-color: var(--purple-roll); color: var(--purple-roll); }
+
+.amount-display { 
+  text-align: center; font-size: 3em; font-weight: 800; 
+  color: var(--text-primary); margin-bottom: 24px; font-variant-numeric: tabular-nums;
+}
+.amount-btns { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+.amt-btn {
+  padding: 14px 0; font-size: 14px; font-weight: 600; min-height: 48px;
+  background: #f8fafc; border: none; border-radius: var(--radius-md); 
+  cursor: pointer; color: var(--text-primary); transition: 0.1s; font-family: inherit;
+}
+.amt-btn:active { background: var(--border-color); transform: scale(0.95); }
+.amt-btn.clear { background: var(--danger-red-bg); color: var(--danger-red); }
+.amt-btn.clear:active { background: var(--danger-red-border); }
+
+.dice-display-area { display: flex; justify-content: center; gap: 16px; margin: 10px 0 24px 0; }
+.dice-slot {
+  width: 60px; height: 60px; border: 2px dashed #cbd5e1; border-radius: var(--radius-md);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 24px; font-weight: 700; color: var(--text-primary); background: transparent; transition: all 0.2s;
+}
+.dice-slot.filled { border-style: solid; border-color: var(--border-color); background: #f8fafc; }
+
+.dice-keypad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.key-btn {
+  padding: 16px 0; font-size: 16px; font-weight: 700; min-height: 52px;
+  border: none; border-radius: var(--radius-md); background-color: #f8fafc; color: var(--text-primary); 
+  cursor: pointer; font-family: inherit; transition: 0.1s;
+}
+.key-btn:active { background-color: var(--border-color); transform: scale(0.95); }
+.key-action { background-color: var(--danger-red-bg); color: var(--danger-red); }
+.key-submit { background-color: #cbd5e1; color: white; grid-column: span 2; font-size: 16px; transition: all 0.2s; }
+.key-submit:not([disabled]) { background-color: #cbd5e1; color: var(--text-primary); }
+.key-submit:active:not([disabled]) { transform: scale(0.96); background-color: var(--border-color); }
+
+.history-card { flex-grow: 1; display: flex; flex-direction: column; }
+.history-container { flex-grow: 1; overflow-y: auto; max-height: 450px; padding-right: 5px; }
+.history-container::-webkit-scrollbar { width: 6px; }
+.history-container::-webkit-scrollbar-track { background: transparent; }
+.history-container::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 10px; }
+
+.empty-msg { color: var(--text-muted); text-align: center; padding: 30px 10px; font-size: 14px; }
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.history-item {
+  padding: 16px 0; border-bottom: 1px solid #f1f5f9; font-size: 14px;
+  display: flex; justify-content: space-between; align-items: center;
+  animation: slideDown 0.3s ease-out;
+}
+.history-item:last-child { border-bottom: none; }
+.history-left { display: flex; flex-direction: column; gap: 6px; }
+
+.hist-top { display: flex; align-items: center; font-size: 13px; color: var(--text-secondary); }
+.hist-bottom { font-size: 14px; color: var(--text-primary); font-weight: 500; }
+
+.history-right { display: flex; align-items: center; text-align: right; gap: 12px;}
+.profit-text { font-weight: 800; font-size: 16px; line-height: 1.2; }
+.profit-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; opacity: 0.8;}
+
+.roll-badge { 
+  background-color: var(--purple-roll-bg); color: var(--purple-roll); font-size: 11px; font-weight: 700;
+  padding: 3px 8px; border-radius: 6px; margin-left: 8px; border: 1px solid #ede9fe;
+}
+
+.delete-btn {
+  background-color: transparent; color: var(--text-secondary); border: 1px solid var(--border-color);
+  border-radius: 6px; width: 32px; height: 32px; font-size: 16px; font-weight: 400;
+  display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s;
+}
+.delete-btn:active { transform: scale(0.85); background-color: #f1f5f9; color: var(--text-primary); }
+
+/* =========================================
+   📱 手機版專屬優化 (Mobile Optimization)
+   ========================================= */
+@media (max-width: 768px) {
+  body { padding: 10px; }
+  .app-header h2 { font-size: 20px; margin-bottom: 16px; }
+  
+  /* 關鍵技術：移除左右區塊限制，改為單一直排流 */
+  .left-panel, .right-panel { display: contents; }
+  .app-container { display: flex; flex-direction: column; gap: 12px; }
+  
+  /* 重新定義卡片順序：盈虧(最重要) -> 投注 -> 金額 -> 鍵盤 -> 紀錄 */
+  .balance-container { order: 1; }
+  .bet-card { order: 2; }
+  .amount-card { order: 3; }
+  .keypad-card { order: 4; }
+  .history-card { order: 5; }
+
+  /* 壓縮間距，最大化可視空間 */
+  .card { padding: 16px; border-radius: 12px; }
+  .balance-amount { font-size: 3em; } /* 字體稍微縮小適應螢幕 */
+  .stats-grid { gap: 8px; margin-top: 16px; padding-top: 16px; }
+  .stat-title { font-size: 11px; }
+  .stat-value { font-size: 14px; }
+  
+  .amount-display { font-size: 2.5em; margin-bottom: 16px; }
+  .dice-slot { width: 50px; height: 50px; font-size: 20px; }
+  .dice-display-area { margin-bottom: 16px; gap: 12px; }
+}

@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>骰寶記錄</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <script src="app.js" defer></script>
+</head>
+<body>
+
+  <header class="app-header">
+    <h2>骰寶記錄</h2>
+  </header>
+
+  <main class="app-container">
+    
+    <aside class="left-panel">
+      <section class="card balance-container">
+        <div class="balance-title">目前盈虧</div>
+        <div id="balanceDisplay" class="balance-amount neutral">$0</div>
+        
+        <div class="stats-grid">
+          <div class="stat-box">
+            <div class="stat-title">局數</div>
+            <div class="stat-value" id="stat-count">0</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-title">總投注額</div>
+            <div class="stat-value" id="stat-wager">$0</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-title">勝率</div>
+            <div class="stat-value" id="stat-winrate">0.0%</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-title">勝出數</div>
+            <div class="stat-value win-text" id="stat-win">0</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-title">落敗數</div>
+            <div class="stat-value lose-text" id="stat-lose">0</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-title">回報率 (ROI)</div>
+            <div class="stat-value" id="stat-roi">0.0%</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card history-card">
+        <div class="history-header">歷史紀錄</div>
+        <div id="historyList" class="history-container">
+          <div id="emptyMsg" class="empty-msg">目前尚無紀錄</div>
+        </div>
+      </section>
+    </aside>
+
+    <section class="right-panel">
+      
+      <div class="card bet-card">
+        <span class="step-label"><span class="step-num">1</span> 投注選項</span>
+        <div class="bet-options" id="betOptions">
+          <button class="bet-btn active" data-type="大">大</button>
+          <button class="bet-btn" data-type="細">細</button>
+          <button class="bet-btn" data-type="圍骰">圍骰</button>
+        </div>
+        <button class="bet-btn roll-btn" id="btn-roll">🎲 擲骰權</button>
+      </div>
+
+      <div class="card amount-card">
+        <span class="step-label"><span class="step-num">2</span> 投注金額</span>
+        <div class="amount-display">$<span id="currentAmount">0</span></div>
+        <div class="amount-btns" id="amountBtns">
+          <button class="amt-btn" data-val="10">+$10</button>
+          <button class="amt-btn" data-val="50">+$50</button>
+          <button class="amt-btn" data-val="100">+$100</button>
+          <button class="amt-btn clear" id="btnClear">重置金額</button>
+        </div>
+      </div>
+
+      <div class="card keypad-card">
+        <span class="step-label"><span class="step-num">3</span> 開彩結果</span>
+        <div class="dice-display-area">
+          <div class="dice-slot" id="dice-0"></div>
+          <div class="dice-slot" id="dice-1"></div>
+          <div class="dice-slot" id="dice-2"></div>
+        </div>
+        <div class="dice-keypad" id="diceKeypad">
+          <button class="key-btn" data-num="1">1</button>
+          <button class="key-btn" data-num="2">2</button>
+          <button class="key-btn" data-num="3">3</button>
+          <button class="key-btn" data-num="4">4</button>
+          <button class="key-btn" data-num="5">5</button>
+          <button class="key-btn" data-num="6">6</button>
+          <button class="key-btn key-action" id="btnDeleteDice">刪除</button>
+          <button class="key-btn key-submit" id="btnSubmit" disabled>確認並結算</button>
+        </div>
+      </div>
+
+    </section>
+  </main>
+
+</body>
+</html>
