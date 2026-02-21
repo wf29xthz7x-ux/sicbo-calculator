@@ -6,18 +6,13 @@ const state = {
   selectedBet: '大',
   currentDice: [],
   hasRollRight: false,
-  stats: {
-    totalBets: 0,
-    totalWagered: 0,
-    wins: 0,
-    losses: 0
-  }
+  stats: { totalBets: 0, totalWagered: 0, wins: 0, losses: 0 }
 };
 
 const DOM = {
   balanceDisplay: document.getElementById('balanceDisplay'),
   currentAmount: document.getElementById('currentAmount'),
-  betButtons: document.querySelectorAll('#betOptions .bet-btn:not(.roll-btn)'),
+  betButtons: document.querySelectorAll('#betOptions .bet-btn'),
   btnRoll: document.getElementById('btn-roll'),
   diceSlots: [document.getElementById('dice-0'), document.getElementById('dice-1'), document.getElementById('dice-2')],
   btnSubmit: document.getElementById('btnSubmit'),
@@ -68,9 +63,18 @@ function init() {
   });
 
   DOM.historyList.addEventListener('click', (e) => {
-    const btn = e.target.closest('.delete-btn');
-    if (btn) {
-      removeRecord(btn);
+    const summary = e.target.closest('.history-summary');
+    if (summary) {
+      const item = summary.closest('.history-item');
+      document.querySelectorAll('.history-item.expanded').forEach(el => {
+        if (el !== item) el.classList.remove('expanded');
+      });
+      item.classList.toggle('expanded');
+    }
+
+    const deleteBtn = e.target.closest('.btn-delete-record');
+    if (deleteBtn) {
+      removeRecord(deleteBtn);
     }
   });
 }
@@ -117,19 +121,15 @@ function calculateResult() {
 
   if (actualResultStr === '圍骰') {
     if (state.selectedBet === '圍骰') {
-      isWin = true;
-      profitLoss = state.betAmount * 24;
+      isWin = true; profitLoss = state.betAmount * 24;
     } else {
-      isWin = false;
-      profitLoss = -state.betAmount;
+      isWin = false; profitLoss = -state.betAmount;
     }
   } else {
     if (state.selectedBet === actualResultStr) {
-      isWin = true;
-      profitLoss = state.betAmount * 1;
+      isWin = true; profitLoss = state.betAmount * 1;
     } else {
-      isWin = false;
-      profitLoss = -state.betAmount;
+      isWin = false; profitLoss = -state.betAmount;
     }
   }
 
@@ -145,8 +145,7 @@ function updateStateAfterRound(profit, wager, isWin) {
   state.totalBalance += profit;
   state.stats.totalBets += 1;
   state.stats.totalWagered += wager;
-  if (isWin) state.stats.wins += 1;
-  else state.stats.losses += 1;
+  if (isWin) state.stats.wins += 1; else state.stats.losses += 1;
   
   updateGlobalUI();
   triggerBalanceAnimation();
@@ -195,18 +194,22 @@ function renderHistoryItem(betType, amount, actualResult, diceStr, profitLoss, i
   item.dataset.profit = profitLoss;
   item.dataset.iswin = isWin;
 
-  // 重構結構：將左邊文字與右邊動作分開，方便在手機上堆疊
   item.innerHTML = `
-    <div class="history-content">
-      <div class="hist-top">${time} | 投注 <b>${betType}</b> ($${amount}) ${rollBadgeHTML}</div>
-      <div class="hist-bottom">${diceStr} <b>${actualResult}</b></div>
-    </div>
-    <div class="history-action">
-      <div class="profit-text ${isWin ? 'positive' : 'negative'}">
-        ${isWin ? '+' : '-'}$${Math.abs(profitLoss)}<br>
-        <span class="profit-label">${isWin ? 'WIN' : 'LOSS'}</span>
+    <div class="history-summary">
+      <div class="hs-left">
+        <div class="hs-time">${time} ${rollBadgeHTML}</div>
+        <div class="hs-title">投注 <b>${betType}</b> <span class="hs-amt">($${amount})</span></div>
       </div>
-      <button class="delete-btn" title="刪除">✖</button>
+      <div class="hs-right">
+        <div class="hs-profit ${isWin ? 'positive' : 'negative'}">
+          ${isWin ? '+' : '-'}$${Math.abs(profitLoss)}
+        </div>
+        <div class="hs-chevron">▼</div>
+      </div>
+    </div>
+    <div class="history-details">
+      <div class="hd-info">🎲 開出結果：${diceStr} <b>${actualResult}</b></div>
+      <button class="btn-delete-record">刪除此紀錄</button>
     </div>
   `;
 
@@ -214,7 +217,7 @@ function renderHistoryItem(betType, amount, actualResult, diceStr, profitLoss, i
 }
 
 function removeRecord(btnElement) {
-  // 補回：刪除前再次確認機制
+  // 補回：刪除紀錄前的確認視窗
   if (!confirm("確定要刪除這筆紀錄嗎？統計數據將會自動重算。")) {
     return;
   }
@@ -224,19 +227,21 @@ function removeRecord(btnElement) {
   const profitLoss = parseInt(item.dataset.profit, 10);
   const isWin = item.dataset.iswin === 'true';
 
-  state.totalBalance -= profitLoss;
-  state.stats.totalBets -= 1;
-  state.stats.totalWagered -= amount;
-  if (isWin) state.stats.wins -= 1;
-  else state.stats.losses -= 1;
+  item.classList.add('removing'); 
+  setTimeout(() => {
+    state.totalBalance -= profitLoss;
+    state.stats.totalBets -= 1;
+    state.stats.totalWagered -= amount;
+    if (isWin) state.stats.wins -= 1; else state.stats.losses -= 1;
 
-  updateGlobalUI();
-  triggerBalanceAnimation();
-  item.remove();
+    updateGlobalUI();
+    triggerBalanceAnimation();
+    item.remove();
 
-  if (DOM.historyList.children.length === 0) {
-    DOM.historyList.innerHTML = '<div id="emptyMsg" class="empty-msg">目前尚無紀錄</div>';
-  }
+    if (DOM.historyList.children.length === 0) {
+      DOM.historyList.innerHTML = '<div id="emptyMsg" class="empty-msg">目前尚無紀錄</div>';
+    }
+  }, 200);
 }
 
 document.addEventListener('DOMContentLoaded', init);

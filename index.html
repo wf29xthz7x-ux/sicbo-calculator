@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>骰寶記錄</title>
+  <title>骰寶記錄 Pro</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -20,7 +20,7 @@
     
     <aside class="left-panel">
       <section class="card balance-container">
-        <div class="balance-title">目前盈虧</div>
+        <div class="card-title text-center">目前盈虧</div>
         <div id="balanceDisplay" class="balance-amount neutral">$0</div>
         
         <div class="stats-grid">
@@ -52,7 +52,7 @@
       </section>
 
       <section class="card history-card">
-        <div class="history-header">歷史紀錄</div>
+        <div class="card-title">歷史紀錄</div>
         <div id="historyList" class="history-container">
           <div id="emptyMsg" class="empty-msg">目前尚無紀錄</div>
         </div>
@@ -62,17 +62,17 @@
     <section class="right-panel">
       
       <div class="card bet-card">
-        <span class="step-label">投注選項</span>
+        <div class="card-title">投注選項</div>
         <div class="bet-options" id="betOptions">
           <button class="bet-btn active" data-type="大">大</button>
           <button class="bet-btn" data-type="細">細</button>
           <button class="bet-btn" data-type="圍骰">圍骰</button>
         </div>
-        <button class="bet-btn roll-btn" id="btn-roll">🎲 擲骰權</button>
+        <button class="roll-btn" id="btn-roll">🎲 擲骰權</button>
       </div>
 
       <div class="card amount-card">
-        <span class="step-label">投注金額</span>
+        <div class="card-title">投注金額</div>
         <div class="amount-display">$<span id="currentAmount">0</span></div>
         <div class="amount-btns" id="amountBtns">
           <button class="amt-btn" data-val="10">+$10</button>
@@ -83,7 +83,7 @@
       </div>
 
       <div class="card keypad-card">
-        <span class="step-label">開彩結果</span>
+        <div class="card-title">開彩結果</div>
         <div class="dice-display-area">
           <div class="dice-slot" id="dice-0"></div>
           <div class="dice-slot" id="dice-1"></div>
@@ -96,7 +96,7 @@
           <button class="key-btn" data-num="4">4</button>
           <button class="key-btn" data-num="5">5</button>
           <button class="key-btn" data-num="6">6</button>
-          <button class="key-btn key-action" id="btnDeleteDice">刪除</button>
+          <button class="key-btn key-action" id="btnDeleteDice">刪除點數</button>
           <button class="key-btn key-submit" id="btnSubmit" disabled>確認並結算</button>
         </div>
       </div>
