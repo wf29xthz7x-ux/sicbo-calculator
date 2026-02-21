@@ -38,7 +38,6 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* 觸控優化 */
 button {
   touch-action: manipulation;
   user-select: none;
@@ -50,31 +49,33 @@ button {
   font-weight: 800; font-size: 24px;
 }
 
-/* --- 核心佈局修改：更緊湊的左右雙欄 --- */
+/* =========================================
+   核心佈局：強制左右緊湊雙欄
+   ========================================= */
 .app-container {
   display: flex; 
-  flex-wrap: nowrap; /* 強制不折行，保持左右並排 */
-  align-items: stretch; /* 讓左右兩邊等高 */
-  gap: 20px;
+  flex-wrap: nowrap; /* 絕對不折行，保持左右並排 */
+  align-items: stretch;
+  gap: 16px; /* 縮小左右兩欄的間距 */
   max-width: 1000px; 
   margin: 0 auto;
 }
 
 .left-panel { 
-  flex: 0 0 340px; /* 固定左側緊湊寬度 */
+  flex: 4; /* 左側佔 40% 空間 */
+  min-width: 0; /* 防止子元素撐破 Flex 容器 */
   display: flex; 
   flex-direction: column; 
-  gap: 20px; 
+  gap: 16px; 
 }
 
 .right-panel { 
-  flex: 1; /* 右側佔滿剩餘空間 */
+  flex: 5; /* 右側佔 50% 空間 (稍微寬一點給按鍵) */
   min-width: 0; 
   display: flex; 
   flex-direction: column; 
-  gap: 20px; 
+  gap: 16px; 
 }
-/* ------------------------------------- */
 
 .card {
   background: var(--surface-color); padding: 24px;
@@ -97,30 +98,26 @@ button {
 .pulse-anim { animation: pulseAmount 0.35s ease-out; display: inline-block; }
 
 .stats-grid {
-  display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;
   margin-top: 24px; padding-top: 24px; border-top: 1px solid #f1f5f9;
 }
 .stat-box { text-align: center; }
 .stat-title { font-size: 12px; color: var(--text-secondary); margin-bottom: 6px; font-weight: 600; }
-.stat-value { font-size: 16px; font-weight: 700; color: var(--text-primary); }
+.stat-value { font-size: 15px; font-weight: 700; color: var(--text-primary); }
 .stat-value.win-text { color: var(--success-green); }
 .stat-value.lose-text { color: var(--danger-red); }
 
+/* 步驟標題已移除數字，保持粗體標題 */
 .step-label { 
   font-size: 15px; font-weight: 700; margin-bottom: 16px; 
-  color: var(--text-primary); display: flex; align-items: center; gap: 8px;
-}
-.step-num {
-  background: var(--primary-blue); color: white; width: 22px; height: 22px; 
-  display: inline-flex; align-items: center; justify-content: center; 
-  border-radius: 50%; font-size: 12px;
+  color: var(--text-primary); display: block;
 }
 
 .history-header { font-size: 16px; font-weight: 700; margin-bottom: 16px; color: var(--text-primary); }
 
-.bet-options { display: flex; gap: 12px; }
+.bet-options { display: flex; gap: 10px; }
 .bet-btn {
-  flex: 1; padding: 16px 0; font-size: 16px; font-weight: 700; min-height: 50px;
+  flex: 1; padding: 14px 0; font-size: 16px; font-weight: 700; min-height: 48px;
   background: var(--surface-color); border: 1px solid var(--border-color); color: var(--text-secondary);
   border-radius: var(--radius-md); cursor: pointer; transition: all 0.2s ease; font-family: inherit;
 }
@@ -128,18 +125,18 @@ button {
 .bet-btn.active { background: var(--primary-blue-bg); border-color: var(--primary-blue); color: var(--primary-blue); }
 
 .roll-btn {
-  width: 100%; margin-top: 12px; font-size: 15px; min-height: 50px;
+  width: 100%; margin-top: 10px; font-size: 15px; min-height: 48px;
   display: flex; align-items: center; justify-content: center; gap: 8px; background: var(--surface-color);
 }
 .roll-btn.active { background: var(--purple-roll-bg); border-color: var(--purple-roll); color: var(--purple-roll); }
 
 .amount-display { 
-  text-align: center; font-size: 3em; font-weight: 800; 
-  color: var(--text-primary); margin-bottom: 24px; font-variant-numeric: tabular-nums;
+  text-align: center; font-size: 2.8em; font-weight: 800; 
+  color: var(--text-primary); margin-bottom: 20px; font-variant-numeric: tabular-nums;
 }
-.amount-btns { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+.amount-btns { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
 .amt-btn {
-  padding: 14px 0; font-size: 14px; font-weight: 600; min-height: 48px;
+  padding: 12px 0; font-size: 14px; font-weight: 600; min-height: 44px;
   background: #f8fafc; border: none; border-radius: var(--radius-md); 
   cursor: pointer; color: var(--text-primary); transition: 0.1s; font-family: inherit;
 }
@@ -147,17 +144,17 @@ button {
 .amt-btn.clear { background: var(--danger-red-bg); color: var(--danger-red); }
 .amt-btn.clear:active { background: var(--danger-red-border); }
 
-.dice-display-area { display: flex; justify-content: center; gap: 16px; margin: 10px 0 24px 0; }
+.dice-display-area { display: flex; justify-content: center; gap: 12px; margin: 10px 0 20px 0; }
 .dice-slot {
-  width: 60px; height: 60px; border: 2px dashed #cbd5e1; border-radius: var(--radius-md);
+  width: 50px; height: 50px; border: 2px dashed #cbd5e1; border-radius: var(--radius-md);
   display: flex; align-items: center; justify-content: center;
-  font-size: 24px; font-weight: 700; color: var(--text-primary); background: transparent; transition: all 0.2s;
+  font-size: 22px; font-weight: 700; color: var(--text-primary); background: transparent; transition: all 0.2s;
 }
 .dice-slot.filled { border-style: solid; border-color: var(--border-color); background: #f8fafc; }
 
-.dice-keypad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.dice-keypad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
 .key-btn {
-  padding: 16px 0; font-size: 16px; font-weight: 700; min-height: 52px;
+  padding: 14px 0; font-size: 16px; font-weight: 700; min-height: 48px;
   border: none; border-radius: var(--radius-md); background-color: #f8fafc; color: var(--text-primary); 
   cursor: pointer; font-family: inherit; transition: 0.1s;
 }
@@ -168,7 +165,7 @@ button {
 .key-submit:active:not([disabled]) { transform: scale(0.96); background-color: var(--border-color); }
 
 .history-card { flex-grow: 1; display: flex; flex-direction: column; }
-.history-container { flex-grow: 1; overflow-y: auto; max-height: 520px; padding-right: 5px; } /* 稍微拉高歷史紀錄空間 */
+.history-container { flex-grow: 1; overflow-y: auto; max-height: 520px; padding-right: 5px; }
 .history-container::-webkit-scrollbar { width: 6px; }
 .history-container::-webkit-scrollbar-track { background: transparent; }
 .history-container::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 10px; }
@@ -181,56 +178,72 @@ button {
 }
 
 .history-item {
-  padding: 16px 0; border-bottom: 1px solid #f1f5f9; font-size: 14px;
+  padding: 12px 0; border-bottom: 1px solid #f1f5f9; font-size: 13px;
   display: flex; justify-content: space-between; align-items: center;
   animation: slideDown 0.3s ease-out;
 }
 .history-item:last-child { border-bottom: none; }
-.history-left { display: flex; flex-direction: column; gap: 6px; }
+.history-left { display: flex; flex-direction: column; gap: 4px; }
 
-.hist-top { display: flex; align-items: center; font-size: 13px; color: var(--text-secondary); }
-.hist-bottom { font-size: 14px; color: var(--text-primary); font-weight: 500; }
+.hist-top { display: flex; align-items: center; font-size: 12px; color: var(--text-secondary); }
+.hist-bottom { font-size: 13px; color: var(--text-primary); font-weight: 500; }
 
-.history-right { display: flex; align-items: center; text-align: right; gap: 12px;}
-.profit-text { font-weight: 800; font-size: 16px; line-height: 1.2; }
-.profit-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; opacity: 0.8;}
+.history-right { display: flex; align-items: center; text-align: right; gap: 8px;}
+.profit-text { font-weight: 800; font-size: 15px; line-height: 1.2; }
+.profit-label { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; opacity: 0.8;}
 
 .roll-badge { 
-  background-color: var(--purple-roll-bg); color: var(--purple-roll); font-size: 11px; font-weight: 700;
-  padding: 3px 8px; border-radius: 6px; margin-left: 8px; border: 1px solid #ede9fe;
+  background-color: var(--purple-roll-bg); color: var(--purple-roll); font-size: 10px; font-weight: 700;
+  padding: 2px 6px; border-radius: 4px; margin-left: 6px; border: 1px solid #ede9fe;
 }
 
 .delete-btn {
   background-color: transparent; color: var(--text-secondary); border: 1px solid var(--border-color);
-  border-radius: 6px; width: 32px; height: 32px; font-size: 16px; font-weight: 400;
-  display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s;
+  border-radius: 6px; width: 28px; height: 28px; font-size: 14px; font-weight: 400;
+  display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; flex-shrink: 0;
 }
 .delete-btn:active { transform: scale(0.85); background-color: #f1f5f9; color: var(--text-primary); }
 
 /* =========================================
-   📱 手機版專屬優化 (Mobile Optimization)
-   維持直立排列，確保手機上依舊好按
+   📱 手機版專屬微調 (保留雙欄，自動縮小內容)
    ========================================= */
-@media (max-width: 800px) {
-  body { padding: 10px; }
-  .app-header h2 { font-size: 20px; margin-bottom: 16px; }
+@media (max-width: 768px) {
+  body { padding: 8px; }
+  .app-header h2 { font-size: 18px; margin-bottom: 12px; }
   
-  .left-panel, .right-panel { display: contents; }
-  .app-container { display: flex; flex-direction: column; gap: 12px; }
+  .app-container { gap: 8px; }
+  .left-panel { gap: 8px; flex: 4.5; } /* 左側面板比例 */
+  .right-panel { gap: 8px; flex: 5.5; } /* 右側面板比例 */
   
-  .balance-container { order: 1; }
-  .bet-card { order: 2; }
-  .amount-card { order: 3; }
-  .keypad-card { order: 4; }
-  .history-card { order: 5; }
+  .card { padding: 12px; border-radius: 10px; }
+  
+  /* 縮小左側統計字體 */
+  .balance-title { font-size: 11px; }
+  .balance-amount { font-size: 2.2em; }
+  .stats-grid { gap: 4px; margin-top: 12px; padding-top: 12px; }
+  .stat-title { font-size: 10px; margin-bottom: 2px; }
+  .stat-value { font-size: 12px; }
+  .history-header { font-size: 14px; margin-bottom: 10px; }
+  .history-item { font-size: 11px; padding: 10px 0; }
+  .hist-top { font-size: 10px; }
+  .hist-bottom { font-size: 11px; }
+  .profit-text { font-size: 13px; }
+  .delete-btn { width: 24px; height: 24px; font-size: 12px; }
 
-  .card { padding: 16px; border-radius: 12px; }
-  .balance-amount { font-size: 3em; }
-  .stats-grid { gap: 8px; margin-top: 16px; padding-top: 16px; }
-  .stat-title { font-size: 11px; }
-  .stat-value { font-size: 14px; }
+  /* 縮小右側操作區字體與按鈕 */
+  .step-label { font-size: 13px; margin-bottom: 10px; }
+  .bet-options { gap: 6px; }
+  .bet-btn { font-size: 14px; min-height: 40px; padding: 10px 0; }
+  .roll-btn { font-size: 13px; min-height: 40px; margin-top: 8px; }
   
-  .amount-display { font-size: 2.5em; margin-bottom: 16px; }
-  .dice-slot { width: 50px; height: 50px; font-size: 20px; }
-  .dice-display-area { margin-bottom: 16px; gap: 12px; }
+  .amount-display { font-size: 2em; margin-bottom: 12px; }
+  .amount-btns { gap: 6px; }
+  .amt-btn { font-size: 12px; min-height: 36px; padding: 8px 0; }
+  
+  .dice-display-area { gap: 8px; margin-bottom: 12px; }
+  .dice-slot { width: 40px; height: 40px; font-size: 18px; }
+  
+  .dice-keypad { gap: 6px; }
+  .key-btn { font-size: 14px; min-height: 40px; padding: 10px 0; }
+  .key-submit { font-size: 14px; }
 }
