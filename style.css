@@ -38,7 +38,7 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* 全域按鈕觸控優化：防放大、防反白、移除預設高光 */
+/* 觸控優化 */
 button {
   touch-action: manipulation;
   user-select: none;
@@ -50,13 +50,31 @@ button {
   font-weight: 800; font-size: 24px;
 }
 
+/* --- 核心佈局修改：更緊湊的左右雙欄 --- */
 .app-container {
-  display: flex; flex-wrap: wrap; gap: 20px;
-  max-width: 960px; margin: 0 auto;
+  display: flex; 
+  flex-wrap: nowrap; /* 強制不折行，保持左右並排 */
+  align-items: stretch; /* 讓左右兩邊等高 */
+  gap: 20px;
+  max-width: 1000px; 
+  margin: 0 auto;
 }
 
-.left-panel { flex: 1; min-width: 300px; display: flex; flex-direction: column; gap: 20px; }
-.right-panel { flex: 1.2; min-width: 320px; display: flex; flex-direction: column; gap: 20px; }
+.left-panel { 
+  flex: 0 0 340px; /* 固定左側緊湊寬度 */
+  display: flex; 
+  flex-direction: column; 
+  gap: 20px; 
+}
+
+.right-panel { 
+  flex: 1; /* 右側佔滿剩餘空間 */
+  min-width: 0; 
+  display: flex; 
+  flex-direction: column; 
+  gap: 20px; 
+}
+/* ------------------------------------- */
 
 .card {
   background: var(--surface-color); padding: 24px;
@@ -71,13 +89,12 @@ button {
 .negative { color: var(--danger-red); } 
 .neutral { color: var(--text-primary); }
 
-/* 盈虧跳動動畫 (結算時觸發) */
 @keyframes pulseAmount {
   0% { transform: scale(1); }
   50% { transform: scale(1.08); }
   100% { transform: scale(1); }
 }
-.pulse-anim { animation: pulseAmount 0.35s ease-out; }
+.pulse-anim { animation: pulseAmount 0.35s ease-out; display: inline-block; }
 
 .stats-grid {
   display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;
@@ -151,7 +168,7 @@ button {
 .key-submit:active:not([disabled]) { transform: scale(0.96); background-color: var(--border-color); }
 
 .history-card { flex-grow: 1; display: flex; flex-direction: column; }
-.history-container { flex-grow: 1; overflow-y: auto; max-height: 450px; padding-right: 5px; }
+.history-container { flex-grow: 1; overflow-y: auto; max-height: 520px; padding-right: 5px; } /* 稍微拉高歷史紀錄空間 */
 .history-container::-webkit-scrollbar { width: 6px; }
 .history-container::-webkit-scrollbar-track { background: transparent; }
 .history-container::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 10px; }
@@ -192,25 +209,23 @@ button {
 
 /* =========================================
    📱 手機版專屬優化 (Mobile Optimization)
+   維持直立排列，確保手機上依舊好按
    ========================================= */
-@media (max-width: 768px) {
+@media (max-width: 800px) {
   body { padding: 10px; }
   .app-header h2 { font-size: 20px; margin-bottom: 16px; }
   
-  /* 關鍵技術：移除左右區塊限制，改為單一直排流 */
   .left-panel, .right-panel { display: contents; }
   .app-container { display: flex; flex-direction: column; gap: 12px; }
   
-  /* 重新定義卡片順序：盈虧(最重要) -> 投注 -> 金額 -> 鍵盤 -> 紀錄 */
   .balance-container { order: 1; }
   .bet-card { order: 2; }
   .amount-card { order: 3; }
   .keypad-card { order: 4; }
   .history-card { order: 5; }
 
-  /* 壓縮間距，最大化可視空間 */
   .card { padding: 16px; border-radius: 12px; }
-  .balance-amount { font-size: 3em; } /* 字體稍微縮小適應螢幕 */
+  .balance-amount { font-size: 3em; }
   .stats-grid { gap: 8px; margin-top: 16px; padding-top: 16px; }
   .stat-title { font-size: 11px; }
   .stat-value { font-size: 14px; }
