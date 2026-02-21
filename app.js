@@ -149,7 +149,7 @@ function updateStateAfterRound(profit, wager, isWin) {
   else state.stats.losses += 1;
   
   updateGlobalUI();
-  triggerBalanceAnimation(); // 觸發跳動動畫
+  triggerBalanceAnimation();
 }
 
 function resetRoundState() {
@@ -159,10 +159,8 @@ function resetRoundState() {
   updateDiceUI();
 }
 
-// 觸發總盈虧的跳動動畫 (給予視覺回饋)
 function triggerBalanceAnimation() {
   DOM.balanceDisplay.classList.remove('pulse-anim');
-  // 觸發重繪 (Reflow) 以重啟動畫
   void DOM.balanceDisplay.offsetWidth; 
   DOM.balanceDisplay.classList.add('pulse-anim');
 }
@@ -197,17 +195,18 @@ function renderHistoryItem(betType, amount, actualResult, diceStr, profitLoss, i
   item.dataset.profit = profitLoss;
   item.dataset.iswin = isWin;
 
+  // 重構結構：將左邊文字與右邊動作分開，方便在手機上堆疊
   item.innerHTML = `
-    <div class="history-left">
+    <div class="history-content">
       <div class="hist-top">${time} | 投注 <b>${betType}</b> ($${amount}) ${rollBadgeHTML}</div>
       <div class="hist-bottom">${diceStr} <b>${actualResult}</b></div>
     </div>
-    <div class="history-right">
+    <div class="history-action">
       <div class="profit-text ${isWin ? 'positive' : 'negative'}">
         ${isWin ? '+' : '-'}$${Math.abs(profitLoss)}<br>
         <span class="profit-label">${isWin ? 'WIN' : 'LOSS'}</span>
       </div>
-      <button class="delete-btn" title="刪除">×</button>
+      <button class="delete-btn" title="刪除">✖</button>
     </div>
   `;
 
@@ -215,6 +214,11 @@ function renderHistoryItem(betType, amount, actualResult, diceStr, profitLoss, i
 }
 
 function removeRecord(btnElement) {
+  // 補回：刪除前再次確認機制
+  if (!confirm("確定要刪除這筆紀錄嗎？統計數據將會自動重算。")) {
+    return;
+  }
+
   const item = btnElement.closest('.history-item');
   const amount = parseInt(item.dataset.amount, 10);
   const profitLoss = parseInt(item.dataset.profit, 10);
@@ -227,7 +231,7 @@ function removeRecord(btnElement) {
   else state.stats.losses -= 1;
 
   updateGlobalUI();
-  triggerBalanceAnimation(); // 刪除時也觸發跳動
+  triggerBalanceAnimation();
   item.remove();
 
   if (DOM.historyList.children.length === 0) {
