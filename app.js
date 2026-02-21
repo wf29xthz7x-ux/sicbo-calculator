@@ -9,6 +9,16 @@ const state = {
   stats: { totalBets: 0, totalWagered: 0, wins: 0, losses: 0 }
 };
 
+// SVG 骰子字典庫，用於動態渲染上方輸入框
+const diceSVGs = {
+  1: '<svg class="dice-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="4"></rect><circle cx="12" cy="12" r="2.5" fill="currentColor" stroke="none"></circle></svg>',
+  2: '<svg class="dice-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="4"></rect><circle cx="8" cy="8" r="1.5" fill="currentColor" stroke="none"></circle><circle cx="16" cy="16" r="1.5" fill="currentColor" stroke="none"></circle></svg>',
+  3: '<svg class="dice-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="4"></rect><circle cx="8" cy="8" r="1.5" fill="currentColor" stroke="none"></circle><circle cx="12" cy="12" r="1.5" fill="currentColor" stroke="none"></circle><circle cx="16" cy="16" r="1.5" fill="currentColor" stroke="none"></circle></svg>',
+  4: '<svg class="dice-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="4"></rect><circle cx="8" cy="8" r="1.5" fill="currentColor" stroke="none"></circle><circle cx="16" cy="8" r="1.5" fill="currentColor" stroke="none"></circle><circle cx="8" cy="16" r="1.5" fill="currentColor" stroke="none"></circle><circle cx="16" cy="16" r="1.5" fill="currentColor" stroke="none"></circle></svg>',
+  5: '<svg class="dice-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="4"></rect><circle cx="8" cy="8" r="1.5" fill="currentColor" stroke="none"></circle><circle cx="16" cy="8" r="1.5" fill="currentColor" stroke="none"></circle><circle cx="12" cy="12" r="1.5" fill="currentColor" stroke="none"></circle><circle cx="8" cy="16" r="1.5" fill="currentColor" stroke="none"></circle><circle cx="16" cy="16" r="1.5" fill="currentColor" stroke="none"></circle></svg>',
+  6: '<svg class="dice-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="4"></rect><circle cx="8" cy="8" r="1.5" fill="currentColor" stroke="none"></circle><circle cx="16" cy="8" r="1.5" fill="currentColor" stroke="none"></circle><circle cx="8" cy="12" r="1.5" fill="currentColor" stroke="none"></circle><circle cx="16" cy="12" r="1.5" fill="currentColor" stroke="none"></circle><circle cx="8" cy="16" r="1.5" fill="currentColor" stroke="none"></circle><circle cx="16" cy="16" r="1.5" fill="currentColor" stroke="none"></circle></svg>'
+};
+
 const DOM = {
   themeToggle: document.getElementById('theme-toggle'),
   balanceDisplay: document.getElementById('balanceDisplay'),
@@ -31,7 +41,6 @@ const DOM = {
 const fmt = (num) => num.toLocaleString('en-US');
 
 function init() {
-  // 1. 主題切換初始化 (使用 ☾ 與 ☀︎)
   if (document.documentElement.getAttribute('data-theme') === 'dark') {
     DOM.themeToggle.innerText = '☀︎';
   }
@@ -49,7 +58,6 @@ function init() {
     }
   });
 
-  // 2. 其他操作監聽
   DOM.betButtons.forEach(btn => {
     btn.addEventListener('click', (e) => {
       state.selectedBet = e.target.dataset.type;
@@ -64,22 +72,26 @@ function init() {
   });
 
   document.getElementById('amountBtns').addEventListener('click', (e) => {
-    if (e.target.classList.contains('amt-btn')) {
-      if (e.target.id === 'btnClear') {
-        state.betAmount = 0;
-      } else {
-        state.betAmount += parseInt(e.target.dataset.val, 10);
-      }
-      DOM.currentAmount.innerText = fmt(state.betAmount);
+    const btn = e.target.closest('.amt-btn');
+    if (!btn) return;
+    if (btn.id === 'btnClear') {
+      state.betAmount = 0;
+    } else {
+      state.betAmount += parseInt(btn.dataset.val, 10);
     }
+    DOM.currentAmount.innerText = fmt(state.betAmount);
   });
 
+  // 改用 closest 攔截按鈕點擊，防止點到 SVG 內部
   document.getElementById('diceKeypad').addEventListener('click', (e) => {
-    if (e.target.dataset.num) {
-      handleDiceInput(parseInt(e.target.dataset.num, 10));
-    } else if (e.target.id === 'btnDeleteDice') {
+    const btn = e.target.closest('.key-btn');
+    if (!btn) return;
+    
+    if (btn.dataset.num) {
+      handleDiceInput(parseInt(btn.dataset.num, 10));
+    } else if (btn.id === 'btnDeleteDice') {
       handleDiceDelete();
-    } else if (e.target.id === 'btnSubmit') {
+    } else if (btn.id === 'btnSubmit') {
       calculateResult();
     }
   });
@@ -118,10 +130,11 @@ function updateDiceUI() {
   for (let i = 0; i < 3; i++) {
     const slot = DOM.diceSlots[i];
     if (state.currentDice[i] !== undefined) {
-      slot.innerText = state.currentDice[i];
+      // 替換為渲染 SVG
+      slot.innerHTML = diceSVGs[state.currentDice[i]];
       slot.classList.add('filled');
     } else {
-      slot.innerText = '';
+      slot.innerHTML = '';
       slot.classList.remove('filled');
     }
   }
