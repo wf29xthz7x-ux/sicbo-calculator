@@ -2,8 +2,10 @@
   /* 固定專業色彩規範 */
   --bg-page: #f1f5f9;
   --bg-card: #ffffff;
+  --bg-hover: #f8fafc;
+  
   --text-main: #0f172a;
-  --text-sub: #475569;
+  --text-sub: #64748b;
   --text-mut: #94a3b8;
   
   --color-blue: #2563eb;
@@ -11,23 +13,17 @@
   --color-blue-border: #bfdbfe;
   
   --color-green: #10b981;
-  --color-green-bg: #ecfdf5;
-  
   --color-red: #ef4444;
-  --color-red-weak-bg: #fef2f2;
-  --color-red-weak-border: #fecaca;
   
-  --color-purple: #8b5cf6;
-  --color-purple-bg: #f5f3ff;
-  
-  /* 統一圓角與陰影 */
+  /* 統一：圓角 16px、間距 12px、Padding 16px、陰影 */
   --border-line: #e2e8f0;
   --radius-card: 16px;
   --radius-btn: 12px;
+  --gap-unified: 12px;
+  --pad-card: 16px;
   
-  --shadow-card: 0 4px 12px rgba(0, 0, 0, 0.04);
-  --shadow-btn: 0 2px 4px rgba(0, 0, 0, 0.03);
-  --shadow-dice: 0 4px 8px rgba(37, 99, 235, 0.15);
+  --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.04);
+  --shadow-btn: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
 * { box-sizing: border-box; }
@@ -44,36 +40,40 @@ body {
 button {
   touch-action: manipulation; user-select: none;
   -webkit-tap-highlight-color: transparent; cursor: pointer;
+  font-family: inherit; transition: all 0.15s ease-out;
 }
+button:active { transform: scale(0.96); }
 
 .text-center { text-align: center; }
 
+/* 標題下調 */
 .app-header h2 { 
-  text-align: center; margin-top: 8px; margin-bottom: 24px; 
-  font-weight: 800; font-size: 24px; letter-spacing: -0.5px;
+  text-align: center; margin-top: 8px; margin-bottom: 20px; 
+  font-weight: 800; font-size: 20px; letter-spacing: -0.5px;
 }
 
 /* =========================================
    全域佈局
    ========================================= */
 .app-container {
-  display: flex; flex-wrap: nowrap; align-items: stretch; gap: 16px;
-  max-width: 1000px; margin: 0 auto;
+  display: flex; flex-wrap: nowrap; align-items: stretch; gap: var(--gap-unified);
+  max-width: 900px; margin: 0 auto;
 }
-.left-panel { flex: 4; min-width: 0; display: flex; flex-direction: column; gap: 16px; }
-.right-panel { flex: 5; min-width: 0; display: flex; flex-direction: column; gap: 16px; }
+.left-panel { flex: 4; min-width: 0; display: flex; flex-direction: column; gap: var(--gap-unified); }
+.right-panel { flex: 5; min-width: 0; display: flex; flex-direction: column; gap: var(--gap-unified); }
 
 /* 統一卡片樣式 */
 .card {
-  background: var(--bg-card); padding: 24px;
+  background: var(--bg-card); padding: var(--pad-card);
   border-radius: var(--radius-card); border: 1px solid var(--border-line);
   box-shadow: var(--shadow-card);
 }
-.card-title { font-size: 15px; font-weight: 700; color: var(--text-main); margin-bottom: 16px; }
+.card-title { font-size: 14px; font-weight: 700; color: var(--text-main); margin-bottom: 12px; }
 
-/* === 左側：盈虧與統計 Grid (還原網格，保留新字體設計) === */
+/* === 左側：盈虧與統計 Grid === */
 .balance-container { text-align: center; }
-.balance-amount { font-size: 3.5em; font-weight: 800; letter-spacing: -1px; line-height: 1.1; margin: 8px 0 16px;}
+/* 盈虧字體縮小為 H1 級別 */
+.balance-amount { font-size: 2.5rem; font-weight: 800; letter-spacing: -1px; line-height: 1.1; margin: 4px 0 12px;}
 .positive { color: var(--color-green); } 
 .negative { color: var(--color-red); } 
 .neutral { color: var(--text-main); }
@@ -87,54 +87,48 @@ button {
 }
 .pulse-anim { animation: pulseAmount 0.3s ease-out; display: inline-block; }
 
+/* 統計網格：兩行三欄，淡標籤+粗數值 */
 .stats-grid {
-  display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;
-  margin-top: 24px; padding-top: 24px; border-top: 1px solid var(--border-line);
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px 8px;
+  padding-top: 16px; border-top: 1px solid var(--border-line);
 }
 .stat-box { text-align: center; }
-.stat-title { font-size: 12px; color: var(--text-mut); margin-bottom: 4px; font-weight: 600; } /* 標籤更淡更小 */
-.stat-value { font-size: 16px; font-weight: 800; color: var(--text-main); } /* 數值更深更粗 */
+.stat-title { font-size: 11px; color: var(--text-sub); margin-bottom: 2px; font-weight: 500; } 
+.stat-value { font-size: 14px; font-weight: 700; color: var(--text-main); }
 
-/* === 左側：歷史紀錄 (App 手風琴樣式) === */
+/* === 左側：歷史紀錄 (高密度單行) === */
 .history-card { flex-grow: 1; display: flex; flex-direction: column; }
-.history-container { flex-grow: 1; overflow-y: auto; max-height: 520px; padding-right: 4px; }
+.history-container { flex-grow: 1; overflow-y: auto; max-height: 480px; padding-right: 4px; }
 .history-container::-webkit-scrollbar { width: 4px; }
 .history-container::-webkit-scrollbar-thumb { background-color: var(--border-line); border-radius: 10px; }
-.empty-msg { color: var(--text-mut); text-align: center; padding: 30px; font-size: 14px; }
+.empty-msg { color: var(--text-mut); text-align: center; padding: 30px; font-size: 13px; }
 
 .history-item {
-  background: var(--bg-card); border: 1px solid var(--border-line);
-  border-radius: var(--radius-btn); margin-bottom: 8px;
+  border-bottom: 1px solid var(--border-line);
   transition: all 0.2s ease; overflow: hidden;
 }
 .history-item.removing { opacity: 0; transform: translateX(-20px); }
 
-/* 收合時的摘要區 */
+/* 單行摘要 */
 .history-summary {
-  padding: 14px 16px; display: flex; justify-content: space-between; align-items: center;
+  padding: 12px 4px; display: flex; justify-content: space-between; align-items: center;
   cursor: pointer; user-select: none;
 }
-.history-summary:active { background-color: var(--bg-page); }
-.hs-left { display: flex; flex-direction: column; gap: 4px; }
-.hs-time { font-size: 11px; color: var(--text-mut); display: flex; align-items: center; gap: 6px;}
-.hs-title { font-size: 14px; color: var(--text-main); font-weight: 500;}
-.hs-title b { font-weight: 700; }
-.hs-amt { color: var(--text-sub); font-size: 13px;}
+.history-summary:active { background-color: var(--bg-hover); border-radius: 8px;}
+.hs-main { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--text-main); }
+.hs-time { color: var(--text-sub); font-size: 12px;}
+.hs-divider { color: var(--border-line); }
+.hs-bet b { font-weight: 700; }
 
-.hs-right { display: flex; align-items: center; gap: 12px; }
-.hs-profit { font-weight: 800; font-size: 16px; }
-.hs-chevron { font-size: 10px; color: var(--text-mut); transition: transform 0.3s; }
+.hs-result { font-weight: 700; font-size: 13px; display: flex; align-items: center; gap: 4px;}
+.hs-chevron { font-size: 9px; color: var(--text-mut); transition: transform 0.3s; }
 .history-item.expanded .hs-chevron { transform: rotate(180deg); color: var(--color-blue); }
+.roll-badge { font-size: 11px; margin-left: 2px;}
 
-.roll-badge { 
-  background-color: var(--color-purple-bg); color: var(--color-purple); 
-  font-size: 9px; font-weight: 700; padding: 2px 6px; border-radius: 4px; 
-}
-
-/* 展開後的細節與刪除按鈕 */
+/* 展開細節與刪除 */
 .history-details {
-  display: none; padding: 12px 16px; background-color: #fafbfc;
-  border-top: 1px solid var(--border-line); flex-direction: column; gap: 12px;
+  display: none; padding: 12px; background-color: var(--bg-hover);
+  border-radius: 8px; margin-bottom: 8px; align-items: center; justify-content: space-between;
   animation: fadeIn 0.2s ease-out;
 }
 .history-item.expanded .history-details { display: flex; }
@@ -143,119 +137,119 @@ button {
 .hd-info { font-size: 13px; color: var(--text-sub); }
 .hd-info b { color: var(--text-main); }
 .btn-delete-record {
-  background: var(--color-red-weak-bg); color: var(--color-red); border: 1px solid var(--color-red-weak-border);
-  padding: 10px; border-radius: 8px; font-size: 13px; font-weight: 700; transition: 0.1s;
+  background: transparent; color: var(--color-red); border: 1px solid var(--color-red);
+  padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 600;
 }
-.btn-delete-record:active { background: #fee2e2; transform: scale(0.98); }
+.btn-delete-record:active { background: var(--color-red); color: white; }
 
-/* === 右側：投注選項 (還原為獨立方塊) === */
-.bet-options { display: flex; gap: 10px; }
+/* === 右側：投注選項 === */
+.bet-options { display: flex; gap: var(--gap-unified); }
 .bet-btn {
-  flex: 1; padding: 14px 0; font-size: 16px; font-weight: 700; min-height: 48px;
-  background: var(--bg-card); border: 1px solid var(--border-line); color: var(--text-sub);
-  border-radius: var(--radius-btn); cursor: pointer; transition: all 0.2s ease; font-family: inherit;
+  flex: 1; padding: 12px 0; font-size: 15px; font-weight: 600; 
+  background: var(--bg-page); border: 1px solid var(--border-line); color: var(--text-sub);
+  border-radius: var(--radius-btn);
 }
-.bet-btn:active { transform: scale(0.96); background: var(--bg-page); }
 .bet-btn.active { 
-  background: var(--color-blue-bg); border-color: var(--color-blue); color: var(--color-blue); 
+  background: var(--color-blue-bg); border-color: var(--color-blue); color: var(--color-blue); font-weight: 700;
 }
-
 .roll-btn {
-  width: 100%; margin-top: 12px; font-size: 14px; padding: 14px 0; font-weight: 600;
-  border: 1px solid var(--border-line); border-radius: var(--radius-btn); background: var(--bg-card);
-  color: var(--text-sub); transition: 0.2s;
+  width: 100%; margin-top: var(--gap-unified); font-size: 14px; padding: 10px 0; font-weight: 600;
+  border: 1px solid var(--border-line); border-radius: var(--radius-btn); background: var(--bg-page);
+  color: var(--text-sub);
 }
-.roll-btn.active { background: var(--color-purple-bg); border-color: var(--color-purple); color: var(--color-purple); font-weight: 700;}
+.roll-btn.active { background: #f5f3ff; border-color: #8b5cf6; color: #8b5cf6; }
 
 /* === 右側：金額按鈕 === */
+.amount-header { display: flex; justify-content: space-between; align-items: center; }
+.current-bet-label { font-size: 11px; color: var(--text-sub); font-weight: 500; background: var(--bg-page); padding: 2px 8px; border-radius: 10px;}
+
 .amount-display { 
-  text-align: center; font-size: 2.8em; font-weight: 800; color: var(--text-main); 
-  margin-bottom: 20px; font-variant-numeric: tabular-nums; word-break: break-word;
+  text-align: center; font-size: 2rem; font-weight: 800; color: var(--text-main); 
+  margin-bottom: 16px; font-variant-numeric: tabular-nums;
 }
 .amount-btns { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
 .amt-btn {
-  padding: 14px 0; font-size: 15px; font-weight: 600; background: var(--bg-card); 
-  border: 1px solid var(--border-line); border-radius: var(--radius-btn); 
-  color: var(--text-main); box-shadow: var(--shadow-btn); transition: 0.1s; font-family: inherit;
+  padding: 10px 0; font-size: 14px; font-weight: 600; background: var(--bg-card); 
+  border: 1px solid var(--border-line); border-radius: 8px; 
+  color: var(--text-main); box-shadow: var(--shadow-btn);
 }
-.amt-btn:active { background: var(--bg-page); transform: scale(0.95); }
-.amt-btn.clear { background: var(--color-red-weak-bg); color: var(--color-red); border-color: var(--color-red-weak-border); box-shadow: none;}
-.amt-btn.clear:active { background: #fee2e2; }
+/* 弱化重置按鈕 */
+.btn-outline { background: transparent; border-color: var(--border-line); color: var(--text-mut); box-shadow: none; font-weight: 500;}
 
 /* === 右側：開彩與鍵盤 === */
-.dice-display-area { display: flex; justify-content: center; gap: 12px; margin: 10px 0 20px 0; }
+.dice-display-area { display: flex; justify-content: center; gap: 8px; margin-bottom: 16px; }
 .dice-slot {
-  width: 54px; height: 54px; border: 2px dashed #cbd5e1; border-radius: var(--radius-btn);
+  width: 48px; height: 48px; border: 2px dashed var(--border-line); border-radius: 10px;
   display: flex; align-items: center; justify-content: center;
   font-size: 22px; font-weight: 800; color: var(--text-mut); background: transparent; transition: all 0.2s;
 }
-/* 實體骰子感 */
 .dice-slot.filled { 
-  border: 2px solid var(--color-blue-border); background: var(--bg-card); 
-  color: var(--color-blue); box-shadow: var(--shadow-dice); transform: translateY(-2px);
+  border: 2px solid var(--color-blue-border); background: var(--color-blue-bg); 
+  color: var(--color-blue);
 }
 
 .dice-keypad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
 .key-btn {
-  padding: 16px 0; font-size: 18px; font-weight: 700; background: var(--bg-card); 
-  border: 1px solid var(--border-line); border-radius: var(--radius-btn); 
-  color: var(--text-main); box-shadow: var(--shadow-btn); transition: 0.1s; font-family: inherit;
+  padding: 12px 0; font-size: 16px; font-weight: 600; background: var(--bg-card); 
+  border: 1px solid var(--border-line); border-radius: 8px; 
+  color: var(--text-main); box-shadow: var(--shadow-btn);
 }
-.key-btn:active { background: var(--color-blue-bg); border-color: var(--color-blue); color: var(--color-blue); transform: scale(0.94); }
+.btn-outline-red { background: transparent; border-color: var(--border-line); color: var(--color-red); box-shadow: none; font-size: 14px;}
 
-.key-action { background: var(--color-red-weak-bg); color: var(--color-red); border-color: var(--color-red-weak-border); box-shadow: none; font-size: 15px;}
-.key-action:active { background: #fee2e2; }
-
-/* 主按鈕：絕對吸睛，禁用時純灰平坦 */
+/* 主按鈕：絕對吸睛 */
 .key-submit { 
   background: var(--color-blue); color: #ffffff; grid-column: span 2; 
-  font-size: 16px; font-weight: 800; border: none; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3); transition: all 0.2s; 
+  font-size: 15px; font-weight: 700; border: none; box-shadow: 0 4px 10px rgba(37, 99, 235, 0.25); 
 }
-.key-submit:active:not([disabled]) { transform: scale(0.96); box-shadow: 0 2px 6px rgba(37, 99, 235, 0.3); }
-.key-submit:disabled { background: #cbd5e1; color: #f8fafc; box-shadow: none; opacity: 0.8; }
+.key-submit:disabled { background: var(--border-line); color: white; box-shadow: none; opacity: 0.8; }
+
 
 /* =========================================
-   📱 手機版嚴格 Grid 雙欄
+   📱 手機版專屬優化
    ========================================= */
 @media (max-width: 768px) {
   body { padding: 6px; }
-  .app-header h2 { font-size: 18px; margin-bottom: 12px; }
+  .app-header h2 { font-size: 16px; margin-bottom: 8px; }
   
   .app-container {
     display: grid;
-    grid-template-columns: minmax(0, 42%) minmax(0, 58%); 
+    grid-template-columns: minmax(0, 43%) minmax(0, 57%); 
     gap: 8px;
   }
   .left-panel, .right-panel { display: flex; width: 100%; gap: 8px; }
-  .card { padding: 12px; border-radius: 14px; min-width: 0; }
-  .card-title { font-size: 13px; margin-bottom: 12px; }
+  
+  .card { padding: 12px; border-radius: 12px; min-width: 0; }
+  .card-title { font-size: 13px; margin-bottom: 8px; }
   
   /* 左側 */
-  .balance-amount { font-size: 2.2em; margin: 4px 0 16px; }
+  .balance-amount { font-size: 1.8rem; margin: 0 0 8px; }
   
-  /* 手機版還原網格對齊與字體大小 */
-  .stats-grid { gap: 4px; margin-top: 12px; padding-top: 12px; }
-  .stat-title { font-size: 9px; margin-bottom: 2px; }
+  .stats-grid { gap: 8px 4px; margin-top: 8px; padding-top: 10px; }
+  .stat-title { font-size: 10px; margin-bottom: 2px; }
   .stat-value { font-size: 12px; }
   
-  .history-summary { padding: 10px 12px; }
-  .hs-title { font-size: 13px; }
-  .hs-profit { font-size: 14px; }
-  .btn-delete-record { padding: 8px; font-size: 12px; }
-
+  .history-summary { padding: 8px 0; }
+  .hs-main { font-size: 11px; gap: 4px;}
+  .hs-time { font-size: 10px; }
+  .hs-result { font-size: 12px; }
+  .history-details { padding: 10px; flex-direction: column; align-items: stretch; gap: 8px;}
+  .hd-info { font-size: 12px; text-align: center;}
+  
   /* 右側 */
-  .bet-options { gap: 4px; }
-  .bet-btn { font-size: 14px; padding: 10px 0; min-height: 40px; }
-  .roll-btn { font-size: 13px; padding: 10px 0; margin-top: 8px; min-height: 40px;}
+  .bet-options { gap: 6px; }
+  .bet-btn { font-size: 13px; padding: 10px 0; border-radius: 8px;}
+  .roll-btn { font-size: 12px; padding: 8px 0; margin-top: 8px; border-radius: 8px;}
   
-  .amount-display { font-size: 2em; margin-bottom: 12px; }
+  .amount-display { font-size: 1.5rem; margin-bottom: 12px; }
   .amount-btns { grid-template-columns: repeat(2, 1fr); gap: 6px; }
-  .amt-btn { font-size: 13px; padding: 10px 0; min-height: 38px;}
+  .amt-btn { font-size: 12px; padding: 8px 0; }
   
-  .dice-display-area { gap: 8px; margin-bottom: 12px; }
-  .dice-slot { width: 42px; height: 42px; font-size: 18px; }
+  .dice-display-area { gap: 6px; margin-bottom: 8px; }
+  /* 手機版骰子填入框調整 */
+  .dice-slot { width: 36px; height: 36px; border-radius: 8px; font-size: 16px; }
   
   .dice-keypad { gap: 6px; }
-  .key-btn { font-size: 15px; padding: 10px 0; min-height: 38px;}
-  .key-submit { font-size: 14px; letter-spacing: -0.5px; }
+  .key-btn { font-size: 14px; padding: 10px 0; }
+  .btn-outline-red { font-size: 12px; }
+  .key-submit { font-size: 13px; }
 }

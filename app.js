@@ -27,6 +27,9 @@ const DOM = {
   }
 };
 
+// 工具：數字千分位格式化
+const fmt = (num) => num.toLocaleString('en-US');
+
 function init() {
   DOM.betButtons.forEach(btn => {
     btn.addEventListener('click', (e) => {
@@ -48,7 +51,7 @@ function init() {
       } else {
         state.betAmount += parseInt(e.target.dataset.val, 10);
       }
-      DOM.currentAmount.innerText = state.betAmount;
+      DOM.currentAmount.innerText = fmt(state.betAmount);
     }
   });
 
@@ -62,14 +65,14 @@ function init() {
     }
   });
 
+  // 歷史紀錄手風琴展開 & 刪除事件代理
   DOM.historyList.addEventListener('click', (e) => {
     const summary = e.target.closest('.history-summary');
     if (summary) {
       const item = summary.closest('.history-item');
-      document.querySelectorAll('.history-item.expanded').forEach(el => {
-        if (el !== item) el.classList.remove('expanded');
-      });
-      item.classList.toggle('expanded');
+      const isExpanded = item.classList.contains('expanded');
+      document.querySelectorAll('.history-item.expanded').forEach(el => el.classList.remove('expanded'));
+      if (!isExpanded) item.classList.add('expanded');
     }
 
     const deleteBtn = e.target.closest('.btn-delete-record');
@@ -97,6 +100,7 @@ function updateDiceUI() {
   for (let i = 0; i < 3; i++) {
     const slot = DOM.diceSlots[i];
     if (state.currentDice[i] !== undefined) {
+      // 移除圖示，只顯示數字
       slot.innerText = state.currentDice[i];
       slot.classList.add('filled');
     } else {
@@ -165,16 +169,16 @@ function triggerBalanceAnimation() {
 }
 
 function updateGlobalUI() {
-  DOM.balanceDisplay.innerText = (state.totalBalance > 0 ? '+$' : (state.totalBalance < 0 ? '-$' : '$')) + Math.abs(state.totalBalance);
+  DOM.balanceDisplay.innerText = (state.totalBalance > 0 ? '+$' : (state.totalBalance < 0 ? '-$' : '$')) + fmt(Math.abs(state.totalBalance));
   DOM.balanceDisplay.className = 'balance-amount ' + (state.totalBalance > 0 ? 'positive' : (state.totalBalance < 0 ? 'negative' : 'neutral'));
 
-  DOM.stats.count.innerText = state.stats.totalBets;
-  DOM.stats.wager.innerText = '$' + state.stats.totalWagered;
+  DOM.stats.count.innerText = fmt(state.stats.totalBets);
+  DOM.stats.wager.innerText = '$' + fmt(state.stats.totalWagered);
   
   const winRate = state.stats.totalBets > 0 ? ((state.stats.wins / state.stats.totalBets) * 100).toFixed(1) : 0;
   DOM.stats.winrate.innerText = winRate + '%';
-  DOM.stats.win.innerText = state.stats.wins;
-  DOM.stats.lose.innerText = state.stats.losses;
+  DOM.stats.win.innerText = fmt(state.stats.wins);
+  DOM.stats.lose.innerText = fmt(state.stats.losses);
   
   const roi = state.stats.totalWagered > 0 ? ((state.totalBalance / state.stats.totalWagered) * 100).toFixed(1) : 0;
   DOM.stats.roi.innerText = (roi > 0 ? '+' : '') + roi + '%';
@@ -186,7 +190,7 @@ function renderHistoryItem(betType, amount, actualResult, diceStr, profitLoss, i
   if (emptyMsg) emptyMsg.remove();
 
   const time = new Date().toLocaleTimeString('zh-HK', { hour12: false, hour: '2-digit', minute:'2-digit' });
-  const rollBadgeHTML = hasRollRightStatus ? `<span class="roll-badge">擲骰權</span>` : '';
+  const rollBadgeHTML = hasRollRightStatus ? `<span class="roll-badge">🎲</span>` : '';
   
   const item = document.createElement('div');
   item.className = 'history-item';
@@ -196,20 +200,18 @@ function renderHistoryItem(betType, amount, actualResult, diceStr, profitLoss, i
 
   item.innerHTML = `
     <div class="history-summary">
-      <div class="hs-left">
-        <div class="hs-time">${time} ${rollBadgeHTML}</div>
-        <div class="hs-title">投注 <b>${betType}</b> <span class="hs-amt">($${amount})</span></div>
+      <div class="hs-main">
+        <span class="hs-time">${time}</span>
+        <span class="hs-divider">|</span>
+        <span class="hs-bet">投注 <b>${betType}</b> ($${fmt(amount)}) ${rollBadgeHTML}</span>
       </div>
-      <div class="hs-right">
-        <div class="hs-profit ${isWin ? 'positive' : 'negative'}">
-          ${isWin ? '+' : '-'}$${Math.abs(profitLoss)}
-        </div>
-        <div class="hs-chevron">▼</div>
+      <div class="hs-result ${isWin ? 'win-text' : 'lose-text'}">
+        ${isWin ? 'WIN' : 'LOSE'} <span class="hs-chevron">▼</span>
       </div>
     </div>
     <div class="history-details">
-      <div class="hd-info">🎲 開出結果：${diceStr} <b>${actualResult}</b></div>
-      <button class="btn-delete-record">刪除此紀錄</button>
+      <div class="hd-info">開出：${diceStr} <b>${actualResult}</b></div>
+      <button class="btn-delete-record">刪除紀錄</button>
     </div>
   `;
 
@@ -217,7 +219,6 @@ function renderHistoryItem(betType, amount, actualResult, diceStr, profitLoss, i
 }
 
 function removeRecord(btnElement) {
-  // 補回：刪除紀錄前的確認視窗
   if (!confirm("確定要刪除這筆紀錄嗎？統計數據將會自動重算。")) {
     return;
   }
