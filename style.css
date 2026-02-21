@@ -61,7 +61,7 @@ body {
   padding: 16px; margin: 0; line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   -webkit-text-size-adjust: 100%; text-size-adjust: 100%;
-  transition: background-color 0.3s, color 0.3s; /* 平滑過渡 */
+  transition: background-color 0.3s, color 0.3s;
   display: flex;
   flex-direction: column;
   min-height: 100vh;
@@ -214,8 +214,10 @@ button:active { transform: scale(0.96); }
 }
 .btn-outline { background: transparent; border-color: var(--border-line); color: var(--text-mut); box-shadow: none; font-weight: 500;}
 
-/* === 右側：開彩與鍵盤 === */
+/* === 右側：開彩與 SVG 骰子鍵盤 === */
 .dice-display-area { display: flex; justify-content: center; gap: 8px; margin-bottom: 16px; }
+
+/* 顯示槽內的 SVG 尺寸設定 */
 .dice-slot {
   width: 48px; height: 48px; border: 2px dashed var(--border-line); border-radius: 10px;
   display: flex; align-items: center; justify-content: center;
@@ -229,13 +231,14 @@ button:active { transform: scale(0.96); }
 
 .dice-keypad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
 
+/* 鍵盤按鈕置中 SVG */
 .key-btn {
   display: flex; align-items: center; justify-content: center;
   padding: 8px 0; font-size: 16px; font-weight: 600; background: var(--bg-card); 
   border: 1px solid var(--border-line); border-radius: 8px; 
   color: var(--text-main); box-shadow: var(--shadow-btn);
 }
-.key-btn .dice-svg { width: 26px; height: 26px; pointer-events: none; }
+.key-btn .dice-svg { width: 26px; height: 26px; pointer-events: none; } /* 防點擊穿透 */
 
 .btn-outline-red { background: transparent; border-color: var(--border-line); color: var(--color-red); box-shadow: none; font-size: 14px;}
 .key-submit { 
@@ -244,7 +247,7 @@ button:active { transform: scale(0.96); }
 }
 .key-submit:disabled { background: var(--border-line); color: var(--text-mut); box-shadow: none; opacity: 0.8; }
 
-/* === 署名區塊 (淡出效果設定) === */
+/* === 署名區塊 (淡入效果設定) === */
 .app-footer {
   text-align: center; font-size: 12px; color: var(--text-mut);
   margin-top: 80px; padding-bottom: 24px; letter-spacing: 0.5px;
