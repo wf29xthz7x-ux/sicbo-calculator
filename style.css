@@ -61,7 +61,10 @@ body {
   padding: 16px; margin: 0; line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   -webkit-text-size-adjust: 100%; text-size-adjust: 100%;
-  transition: background-color 0.3s, color 0.3s;
+  transition: background-color 0.3s, color 0.3s; /* 平滑過渡 */
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
 }
 
 button {
@@ -76,7 +79,7 @@ button:active { transform: scale(0.96); }
 .app-header {
   position: relative;
   display: flex; align-items: center; justify-content: center;
-  max-width: 900px; margin: 0 auto 20px auto;
+  max-width: 900px; width: 100%; margin: 0 auto 20px auto;
 }
 .app-header h2 { margin: 0; font-weight: 800; font-size: 20px; letter-spacing: -0.5px; }
 
@@ -94,7 +97,7 @@ button:active { transform: scale(0.96); }
    ========================================= */
 .app-container {
   display: flex; flex-wrap: nowrap; align-items: stretch; gap: var(--gap-unified);
-  max-width: 900px; margin: 0 auto;
+  max-width: 900px; margin: 0 auto; width: 100%; flex: 1 0 auto;
 }
 .left-panel { flex: 4; min-width: 0; display: flex; flex-direction: column; gap: var(--gap-unified); }
 .right-panel { flex: 5; min-width: 0; display: flex; flex-direction: column; gap: var(--gap-unified); }
@@ -157,7 +160,10 @@ button:active { transform: scale(0.96); }
 .hs-result { font-weight: 700; font-size: 13px; display: flex; align-items: center; gap: 4px;}
 .hs-chevron { font-size: 9px; color: var(--text-mut); transition: transform 0.3s; }
 .history-item.expanded .hs-chevron { transform: rotate(180deg); color: var(--color-blue); }
-.roll-badge { font-size: 11px; margin-left: 2px;}
+.roll-badge { 
+  font-size: 10px; background-color: var(--color-purple-bg); color: var(--color-purple);
+  padding: 2px 6px; border-radius: 4px; border: 1px solid var(--border-line); margin-left: 2px;
+}
 
 .history-details {
   display: none; padding: 12px; background-color: var(--bg-hover);
@@ -190,7 +196,7 @@ button:active { transform: scale(0.96); }
   border: 1px solid var(--border-line); border-radius: var(--radius-btn); background: var(--bg-page);
   color: var(--text-sub);
 }
-.roll-btn.active { background: var(--color-purple-bg); border-color: var(--color-purple); color: var(--color-purple); }
+.roll-btn.active { background: var(--color-purple-bg); border-color: #8b5cf6; color: #8b5cf6; }
 
 /* === 右側：金額按鈕 === */
 .amount-header { display: flex; justify-content: space-between; align-items: center; }
@@ -208,10 +214,8 @@ button:active { transform: scale(0.96); }
 }
 .btn-outline { background: transparent; border-color: var(--border-line); color: var(--text-mut); box-shadow: none; font-weight: 500;}
 
-/* === 右側：開彩與 SVG 骰子鍵盤 === */
+/* === 右側：開彩與鍵盤 === */
 .dice-display-area { display: flex; justify-content: center; gap: 8px; margin-bottom: 16px; }
-
-/* 顯示槽內的 SVG 尺寸設定 */
 .dice-slot {
   width: 48px; height: 48px; border: 2px dashed var(--border-line); border-radius: 10px;
   display: flex; align-items: center; justify-content: center;
@@ -221,23 +225,17 @@ button:active { transform: scale(0.96); }
   border: 2px solid var(--color-blue-border); background: var(--color-blue-bg); 
   color: var(--color-blue);
 }
-.dice-slot .dice-svg {
-  width: 32px; height: 32px;
-}
+.dice-slot .dice-svg { width: 32px; height: 32px; }
 
 .dice-keypad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
 
-/* 鍵盤按鈕置中 SVG */
 .key-btn {
   display: flex; align-items: center; justify-content: center;
   padding: 8px 0; font-size: 16px; font-weight: 600; background: var(--bg-card); 
   border: 1px solid var(--border-line); border-radius: 8px; 
   color: var(--text-main); box-shadow: var(--shadow-btn);
 }
-.key-btn .dice-svg {
-  width: 26px; height: 26px;
-  pointer-events: none; /* 防止點擊穿透到 SVG */
-}
+.key-btn .dice-svg { width: 26px; height: 26px; pointer-events: none; }
 
 .btn-outline-red { background: transparent; border-color: var(--border-line); color: var(--color-red); box-shadow: none; font-size: 14px;}
 .key-submit { 
@@ -246,10 +244,15 @@ button:active { transform: scale(0.96); }
 }
 .key-submit:disabled { background: var(--border-line); color: var(--text-mut); box-shadow: none; opacity: 0.8; }
 
-/* === 署名區塊 === */
+/* === 署名區塊 (淡出效果設定) === */
 .app-footer {
   text-align: center; font-size: 12px; color: var(--text-mut);
-  margin-top: 24px; padding-bottom: 16px; letter-spacing: 0.5px;
+  margin-top: 80px; padding-bottom: 24px; letter-spacing: 0.5px;
+  opacity: 0; transform: translateY(10px);
+  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+.app-footer.show {
+  opacity: 1; transform: translateY(0);
 }
 
 /* =========================================

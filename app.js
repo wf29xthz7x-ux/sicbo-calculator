@@ -9,7 +9,6 @@ const state = {
   stats: { totalBets: 0, totalWagered: 0, wins: 0, losses: 0 }
 };
 
-// SVG 骰子字典庫，用於動態渲染上方輸入框
 const diceSVGs = {
   1: '<svg class="dice-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="4"></rect><circle cx="12" cy="12" r="2.5" fill="currentColor" stroke="none"></circle></svg>',
   2: '<svg class="dice-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="4"></rect><circle cx="8" cy="8" r="1.5" fill="currentColor" stroke="none"></circle><circle cx="16" cy="16" r="1.5" fill="currentColor" stroke="none"></circle></svg>',
@@ -82,7 +81,6 @@ function init() {
     DOM.currentAmount.innerText = fmt(state.betAmount);
   });
 
-  // 改用 closest 攔截按鈕點擊，防止點到 SVG 內部
   document.getElementById('diceKeypad').addEventListener('click', (e) => {
     const btn = e.target.closest('.key-btn');
     if (!btn) return;
@@ -110,6 +108,21 @@ function init() {
       removeRecord(deleteBtn);
     }
   });
+
+  // 底部 Credit 淡入偵測邏輯 (Intersection Observer)
+  const creditFooter = document.getElementById('creditFooter');
+  if (creditFooter) {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          creditFooter.classList.add('show');
+        } else {
+          creditFooter.classList.remove('show');
+        }
+      });
+    }, { threshold: 0.1 });
+    observer.observe(creditFooter);
+  }
 }
 
 function handleDiceInput(num) {
@@ -130,7 +143,6 @@ function updateDiceUI() {
   for (let i = 0; i < 3; i++) {
     const slot = DOM.diceSlots[i];
     if (state.currentDice[i] !== undefined) {
-      // 替換為渲染 SVG
       slot.innerHTML = diceSVGs[state.currentDice[i]];
       slot.classList.add('filled');
     } else {
@@ -220,7 +232,8 @@ function renderHistoryItem(betType, amount, actualResult, diceStr, profitLoss, i
   if (emptyMsg) emptyMsg.remove();
 
   const time = new Date().toLocaleTimeString('zh-HK', { hour12: false, hour: '2-digit', minute:'2-digit' });
-  const rollBadgeHTML = hasRollRightStatus ? `<span class="roll-badge">🎲</span>` : '';
+  // 移除 Emoji，改為乾淨的文字標籤
+  const rollBadgeHTML = hasRollRightStatus ? `<span class="roll-badge">擲骰權</span>` : '';
   
   const item = document.createElement('div');
   item.className = 'history-item';
