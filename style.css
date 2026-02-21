@@ -36,6 +36,9 @@ body {
   margin: 0;
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
+  /* 鎖死系統字體自動放大機制，保證 iOS / Android 視覺一致 */
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
 }
 
 button {
@@ -50,32 +53,19 @@ button {
 }
 
 /* =========================================
-   核心佈局：強制左右緊湊雙欄
+   電腦 / 平板佈局 (Flexbox 雙欄)
    ========================================= */
 .app-container {
   display: flex; 
-  flex-wrap: nowrap; /* 絕對不折行，保持左右並排 */
+  flex-wrap: nowrap;
   align-items: stretch;
-  gap: 16px; /* 縮小左右兩欄的間距 */
+  gap: 16px; 
   max-width: 1000px; 
   margin: 0 auto;
 }
 
-.left-panel { 
-  flex: 4; /* 左側佔 40% 空間 */
-  min-width: 0; /* 防止子元素撐破 Flex 容器 */
-  display: flex; 
-  flex-direction: column; 
-  gap: 16px; 
-}
-
-.right-panel { 
-  flex: 5; /* 右側佔 50% 空間 (稍微寬一點給按鍵) */
-  min-width: 0; 
-  display: flex; 
-  flex-direction: column; 
-  gap: 16px; 
-}
+.left-panel { flex: 4; min-width: 0; display: flex; flex-direction: column; gap: 16px; }
+.right-panel { flex: 5; min-width: 0; display: flex; flex-direction: column; gap: 16px; }
 
 .card {
   background: var(--surface-color); padding: 24px;
@@ -83,6 +73,7 @@ button {
   box-shadow: var(--shadow-sm);
 }
 
+/* === 左側內容 === */
 .balance-container { text-align: center; }
 .balance-title { font-size: 14px; color: var(--text-secondary); font-weight: 700; margin-bottom: 8px; }
 .balance-amount { font-size: 3.5em; font-weight: 800; letter-spacing: -1px; transition: color 0.3s; line-height: 1.2;}
@@ -107,13 +98,46 @@ button {
 .stat-value.win-text { color: var(--success-green); }
 .stat-value.lose-text { color: var(--danger-red); }
 
-/* 步驟標題已移除數字，保持粗體標題 */
-.step-label { 
-  font-size: 15px; font-weight: 700; margin-bottom: 16px; 
-  color: var(--text-primary); display: block;
+.history-header { font-size: 16px; font-weight: 700; margin-bottom: 16px; color: var(--text-primary); }
+.history-card { flex-grow: 1; display: flex; flex-direction: column; }
+.history-container { flex-grow: 1; overflow-y: auto; max-height: 520px; padding-right: 5px; }
+.history-container::-webkit-scrollbar { width: 6px; }
+.history-container::-webkit-scrollbar-track { background: transparent; }
+.history-container::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 10px; }
+.empty-msg { color: var(--text-muted); text-align: center; padding: 30px 10px; font-size: 14px; }
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-5px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
-.history-header { font-size: 16px; font-weight: 700; margin-bottom: 16px; color: var(--text-primary); }
+.history-item {
+  padding: 12px 0; border-bottom: 1px solid #f1f5f9; font-size: 13px;
+  display: flex; justify-content: space-between; align-items: center;
+  animation: slideDown 0.3s ease-out;
+}
+.history-item:last-child { border-bottom: none; }
+.history-left { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+
+.hist-top { display: flex; align-items: center; font-size: 12px; color: var(--text-secondary); white-space: nowrap;}
+.hist-bottom { font-size: 13px; color: var(--text-primary); font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
+
+.history-right { display: flex; align-items: center; text-align: right; gap: 8px; flex-shrink: 0;}
+.profit-text { font-weight: 800; font-size: 15px; line-height: 1.2; }
+.profit-label { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; opacity: 0.8;}
+.roll-badge { 
+  background-color: var(--purple-roll-bg); color: var(--purple-roll); font-size: 10px; font-weight: 700;
+  padding: 2px 6px; border-radius: 4px; margin-left: 6px; border: 1px solid #ede9fe;
+}
+.delete-btn {
+  background-color: transparent; color: var(--text-secondary); border: 1px solid var(--border-color);
+  border-radius: 6px; width: 28px; height: 28px; font-size: 14px; font-weight: 400;
+  display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; flex-shrink: 0;
+}
+.delete-btn:active { transform: scale(0.85); background-color: #f1f5f9; color: var(--text-primary); }
+
+/* === 右側內容 === */
+.step-label { font-size: 15px; font-weight: 700; margin-bottom: 16px; color: var(--text-primary); display: block;}
 
 .bet-options { display: flex; gap: 10px; }
 .bet-btn {
@@ -132,7 +156,7 @@ button {
 
 .amount-display { 
   text-align: center; font-size: 2.8em; font-weight: 800; 
-  color: var(--text-primary); margin-bottom: 20px; font-variant-numeric: tabular-nums;
+  color: var(--text-primary); margin-bottom: 20px; font-variant-numeric: tabular-nums; word-break: break-word;
 }
 .amount-btns { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
 .amt-btn {
@@ -158,92 +182,60 @@ button {
   border: none; border-radius: var(--radius-md); background-color: #f8fafc; color: var(--text-primary); 
   cursor: pointer; font-family: inherit; transition: 0.1s;
 }
-.key-btn:active { background-color: var(--border-color); transform: scale(0.95); }
+.key-btn:active { background: var(--border-color); transform: scale(0.95); }
 .key-action { background-color: var(--danger-red-bg); color: var(--danger-red); }
 .key-submit { background-color: #cbd5e1; color: white; grid-column: span 2; font-size: 16px; transition: all 0.2s; }
 .key-submit:not([disabled]) { background-color: #cbd5e1; color: var(--text-primary); }
 .key-submit:active:not([disabled]) { transform: scale(0.96); background-color: var(--border-color); }
 
-.history-card { flex-grow: 1; display: flex; flex-direction: column; }
-.history-container { flex-grow: 1; overflow-y: auto; max-height: 520px; padding-right: 5px; }
-.history-container::-webkit-scrollbar { width: 6px; }
-.history-container::-webkit-scrollbar-track { background: transparent; }
-.history-container::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 10px; }
-
-.empty-msg { color: var(--text-muted); text-align: center; padding: 30px 10px; font-size: 14px; }
-
-@keyframes slideDown {
-  from { opacity: 0; transform: translateY(-5px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-.history-item {
-  padding: 12px 0; border-bottom: 1px solid #f1f5f9; font-size: 13px;
-  display: flex; justify-content: space-between; align-items: center;
-  animation: slideDown 0.3s ease-out;
-}
-.history-item:last-child { border-bottom: none; }
-.history-left { display: flex; flex-direction: column; gap: 4px; }
-
-.hist-top { display: flex; align-items: center; font-size: 12px; color: var(--text-secondary); }
-.hist-bottom { font-size: 13px; color: var(--text-primary); font-weight: 500; }
-
-.history-right { display: flex; align-items: center; text-align: right; gap: 8px;}
-.profit-text { font-weight: 800; font-size: 15px; line-height: 1.2; }
-.profit-label { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; opacity: 0.8;}
-
-.roll-badge { 
-  background-color: var(--purple-roll-bg); color: var(--purple-roll); font-size: 10px; font-weight: 700;
-  padding: 2px 6px; border-radius: 4px; margin-left: 6px; border: 1px solid #ede9fe;
-}
-
-.delete-btn {
-  background-color: transparent; color: var(--text-secondary); border: 1px solid var(--border-color);
-  border-radius: 6px; width: 28px; height: 28px; font-size: 14px; font-weight: 400;
-  display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; flex-shrink: 0;
-}
-.delete-btn:active { transform: scale(0.85); background-color: #f1f5f9; color: var(--text-primary); }
 
 /* =========================================
-   📱 手機版專屬微調 (保留雙欄，自動縮小內容)
+   📱 手機版專屬優化 (嚴格 Grid 雙欄)
    ========================================= */
 @media (max-width: 768px) {
-  body { padding: 8px; }
+  body { padding: 6px; }
   .app-header h2 { font-size: 18px; margin-bottom: 12px; }
   
-  .app-container { gap: 8px; }
-  .left-panel { gap: 8px; flex: 4.5; } /* 左側面板比例 */
-  .right-panel { gap: 8px; flex: 5.5; } /* 右側面板比例 */
+  /* 關鍵修復：放棄 Flex，改用嚴格 Grid 控制比例，防範內容撐破 */
+  .app-container {
+    display: grid;
+    grid-template-columns: minmax(0, 4.2fr) minmax(0, 5.8fr); /* 左 42% / 右 58% */
+    gap: 8px;
+  }
+  .left-panel, .right-panel { display: flex; width: 100%; gap: 8px;}
   
-  .card { padding: 12px; border-radius: 10px; }
+  /* 防止卡片內部元素撐破 */
+  .card { padding: 10px; border-radius: 10px; min-width: 0; }
   
-  /* 縮小左側統計字體 */
-  .balance-title { font-size: 11px; }
-  .balance-amount { font-size: 2.2em; }
+  /* 左側極限縮小 */
+  .balance-title { font-size: 11px; margin-bottom: 4px;}
+  .balance-amount { font-size: 2em; }
   .stats-grid { gap: 4px; margin-top: 12px; padding-top: 12px; }
-  .stat-title { font-size: 10px; margin-bottom: 2px; }
-  .stat-value { font-size: 12px; }
-  .history-header { font-size: 14px; margin-bottom: 10px; }
-  .history-item { font-size: 11px; padding: 10px 0; }
-  .hist-top { font-size: 10px; }
+  .stat-title { font-size: 9px; margin-bottom: 2px; white-space: nowrap; letter-spacing: -0.5px;}
+  .stat-value { font-size: 11px; }
+  
+  .history-header { font-size: 13px; margin-bottom: 8px; }
+  .history-item { font-size: 11px; padding: 8px 0; }
+  .hist-top { font-size: 9px; letter-spacing: -0.3px;}
   .hist-bottom { font-size: 11px; }
-  .profit-text { font-size: 13px; }
+  .profit-text { font-size: 12px; }
   .delete-btn { width: 24px; height: 24px; font-size: 12px; }
 
-  /* 縮小右側操作區字體與按鈕 */
-  .step-label { font-size: 13px; margin-bottom: 10px; }
-  .bet-options { gap: 6px; }
-  .bet-btn { font-size: 14px; min-height: 40px; padding: 10px 0; }
-  .roll-btn { font-size: 13px; min-height: 40px; margin-top: 8px; }
+  /* 右側緊湊排版 */
+  .step-label { font-size: 13px; margin-bottom: 8px; }
+  .bet-options { gap: 4px; }
+  .bet-btn { font-size: 14px; min-height: 40px; padding: 6px 0; }
+  .roll-btn { font-size: 13px; min-height: 40px; margin-top: 6px; }
   
-  .amount-display { font-size: 2em; margin-bottom: 12px; }
-  .amount-btns { gap: 6px; }
-  .amt-btn { font-size: 12px; min-height: 36px; padding: 8px 0; }
+  .amount-display { font-size: 1.8em; margin-bottom: 12px; }
+  .amount-btns { gap: 4px; }
+  /* 防止 4 個按鈕撐破容器：不換行 + 縮減內距 */
+  .amt-btn { font-size: 11px; min-height: 38px; padding: 0; white-space: nowrap; letter-spacing: -0.5px;}
   
-  .dice-display-area { gap: 8px; margin-bottom: 12px; }
-  .dice-slot { width: 40px; height: 40px; font-size: 18px; }
+  .dice-display-area { gap: 6px; margin-bottom: 12px; }
+  .dice-slot { width: 38px; height: 38px; font-size: 16px; }
   
-  .dice-keypad { gap: 6px; }
-  .key-btn { font-size: 14px; min-height: 40px; padding: 10px 0; }
-  .key-submit { font-size: 14px; }
+  .dice-keypad { gap: 4px; }
+  .key-btn { font-size: 13px; min-height: 38px; padding: 4px 0; }
+  .key-submit { font-size: 13px; letter-spacing: -0.5px; }
 }
