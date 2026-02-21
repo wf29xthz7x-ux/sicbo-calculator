@@ -1,5 +1,5 @@
 :root {
-  /* 固定專業色彩規範 */
+  /* 亮色模式色彩規範 (Light Theme) */
   --bg-page: #f1f5f9;
   --bg-card: #ffffff;
   --bg-hover: #f8fafc;
@@ -15,15 +15,41 @@
   --color-green: #10b981;
   --color-red: #ef4444;
   
-  /* 統一：圓角 16px、間距 12px、Padding 16px、陰影 */
   --border-line: #e2e8f0;
+  
+  --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.04);
+  --shadow-btn: 0 1px 2px rgba(0, 0, 0, 0.05);
+  
+  /* 統一形狀與間距 */
   --radius-card: 16px;
   --radius-btn: 12px;
   --gap-unified: 12px;
   --pad-card: 16px;
+}
+
+/* ====================================================
+   OLED 極致深色模式 (Pure Dark Theme)
+   ==================================================== */
+[data-theme="dark"] {
+  --bg-page: #000000;       /* OLED 純黑背景 */
+  --bg-card: #121212;       /* 極深灰卡片，拉出空間層次 */
+  --bg-hover: #1e1e1e;      /* 點擊懸停回饋色 */
   
-  --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.04);
-  --shadow-btn: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --text-main: #f8fafc;     /* 主文字亮白 */
+  --text-sub: #9ca3af;      /* 次文字柔灰 */
+  --text-mut: #6b7280;      /* 弱化文字 */
+  
+  --color-blue: #60a5fa;    /* OLED 友善亮藍色 */
+  --color-blue-bg: rgba(59, 130, 246, 0.15);
+  --color-blue-border: rgba(59, 130, 246, 0.3);
+  
+  --color-green: #34d399;   /* OLED 友善亮綠色 */
+  --color-red: #f87171;     /* OLED 友善亮紅色 */
+  
+  --border-line: #2a2a2a;   /* 柔和的深灰邊框，純黑中不刺眼 */
+  
+  --shadow-card: 0 4px 12px rgba(0, 0, 0, 0.8);
+  --shadow-btn: 0 1px 2px rgba(0, 0, 0, 0.5);
 }
 
 * { box-sizing: border-box; }
@@ -35,6 +61,7 @@ body {
   padding: 16px; margin: 0; line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   -webkit-text-size-adjust: 100%; text-size-adjust: 100%;
+  transition: background-color 0.3s, color 0.3s; /* 平滑過渡 */
 }
 
 button {
@@ -43,14 +70,25 @@ button {
   font-family: inherit; transition: all 0.15s ease-out;
 }
 button:active { transform: scale(0.96); }
-
 .text-center { text-align: center; }
 
-/* 標題下調 */
-.app-header h2 { 
-  text-align: center; margin-top: 8px; margin-bottom: 20px; 
-  font-weight: 800; font-size: 20px; letter-spacing: -0.5px;
+/* === 頭部與主題按鈕 === */
+.app-header {
+  position: relative;
+  display: flex; align-items: center; justify-content: center;
+  max-width: 900px; margin: 0 auto 20px auto;
 }
+.app-header h2 { margin: 0; font-weight: 800; font-size: 20px; letter-spacing: -0.5px; }
+
+/* 符號按鈕調整：稍微放大以匹配視覺比重 */
+.theme-btn {
+  position: absolute; right: 0;
+  background: transparent; border: none; font-size: 24px;
+  padding: 6px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--text-main); line-height: 1;
+}
+.theme-btn:hover { background: var(--bg-card); }
 
 /* =========================================
    全域佈局
@@ -62,17 +100,16 @@ button:active { transform: scale(0.96); }
 .left-panel { flex: 4; min-width: 0; display: flex; flex-direction: column; gap: var(--gap-unified); }
 .right-panel { flex: 5; min-width: 0; display: flex; flex-direction: column; gap: var(--gap-unified); }
 
-/* 統一卡片樣式 */
 .card {
   background: var(--bg-card); padding: var(--pad-card);
   border-radius: var(--radius-card); border: 1px solid var(--border-line);
   box-shadow: var(--shadow-card);
+  transition: background-color 0.3s, border-color 0.3s, box-shadow 0.3s;
 }
 .card-title { font-size: 14px; font-weight: 700; color: var(--text-main); margin-bottom: 12px; }
 
 /* === 左側：盈虧與統計 Grid === */
 .balance-container { text-align: center; }
-/* 盈虧字體縮小為 H1 級別 */
 .balance-amount { font-size: 2.5rem; font-weight: 800; letter-spacing: -1px; line-height: 1.1; margin: 4px 0 12px;}
 .positive { color: var(--color-green); } 
 .negative { color: var(--color-red); } 
@@ -87,7 +124,6 @@ button:active { transform: scale(0.96); }
 }
 .pulse-anim { animation: pulseAmount 0.3s ease-out; display: inline-block; }
 
-/* 統計網格：兩行三欄，淡標籤+粗數值 */
 .stats-grid {
   display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px 8px;
   padding-top: 16px; border-top: 1px solid var(--border-line);
@@ -96,7 +132,7 @@ button:active { transform: scale(0.96); }
 .stat-title { font-size: 11px; color: var(--text-sub); margin-bottom: 2px; font-weight: 500; } 
 .stat-value { font-size: 14px; font-weight: 700; color: var(--text-main); }
 
-/* === 左側：歷史紀錄 (高密度單行) === */
+/* === 左側：歷史紀錄 === */
 .history-card { flex-grow: 1; display: flex; flex-direction: column; }
 .history-container { flex-grow: 1; overflow-y: auto; max-height: 480px; padding-right: 4px; }
 .history-container::-webkit-scrollbar { width: 4px; }
@@ -109,7 +145,6 @@ button:active { transform: scale(0.96); }
 }
 .history-item.removing { opacity: 0; transform: translateX(-20px); }
 
-/* 單行摘要 */
 .history-summary {
   padding: 12px 4px; display: flex; justify-content: space-between; align-items: center;
   cursor: pointer; user-select: none;
@@ -125,7 +160,6 @@ button:active { transform: scale(0.96); }
 .history-item.expanded .hs-chevron { transform: rotate(180deg); color: var(--color-blue); }
 .roll-badge { font-size: 11px; margin-left: 2px;}
 
-/* 展開細節與刪除 */
 .history-details {
   display: none; padding: 12px; background-color: var(--bg-hover);
   border-radius: 8px; margin-bottom: 8px; align-items: center; justify-content: space-between;
@@ -157,7 +191,7 @@ button:active { transform: scale(0.96); }
   border: 1px solid var(--border-line); border-radius: var(--radius-btn); background: var(--bg-page);
   color: var(--text-sub);
 }
-.roll-btn.active { background: #f5f3ff; border-color: #8b5cf6; color: #8b5cf6; }
+.roll-btn.active { background: var(--color-purple-bg); border-color: var(--color-purple); color: var(--color-purple); }
 
 /* === 右側：金額按鈕 === */
 .amount-header { display: flex; justify-content: space-between; align-items: center; }
@@ -173,7 +207,6 @@ button:active { transform: scale(0.96); }
   border: 1px solid var(--border-line); border-radius: 8px; 
   color: var(--text-main); box-shadow: var(--shadow-btn);
 }
-/* 弱化重置按鈕 */
 .btn-outline { background: transparent; border-color: var(--border-line); color: var(--text-mut); box-shadow: none; font-weight: 500;}
 
 /* === 右側：開彩與鍵盤 === */
@@ -181,7 +214,7 @@ button:active { transform: scale(0.96); }
 .dice-slot {
   width: 48px; height: 48px; border: 2px dashed var(--border-line); border-radius: 10px;
   display: flex; align-items: center; justify-content: center;
-  font-size: 22px; font-weight: 800; color: var(--text-mut); background: transparent; transition: all 0.2s;
+  font-size: 24px; font-weight: 800; color: var(--text-main); background: transparent; transition: all 0.2s;
 }
 .dice-slot.filled { 
   border: 2px solid var(--color-blue-border); background: var(--color-blue-bg); 
@@ -196,12 +229,11 @@ button:active { transform: scale(0.96); }
 }
 .btn-outline-red { background: transparent; border-color: var(--border-line); color: var(--color-red); box-shadow: none; font-size: 14px;}
 
-/* 主按鈕：絕對吸睛 */
 .key-submit { 
   background: var(--color-blue); color: #ffffff; grid-column: span 2; 
-  font-size: 15px; font-weight: 700; border: none; box-shadow: 0 4px 10px rgba(37, 99, 235, 0.25); 
+  font-size: 15px; font-weight: 700; border: none; box-shadow: var(--shadow-card); 
 }
-.key-submit:disabled { background: var(--border-line); color: white; box-shadow: none; opacity: 0.8; }
+.key-submit:disabled { background: var(--border-line); color: var(--text-mut); box-shadow: none; opacity: 0.8; }
 
 
 /* =========================================
@@ -209,7 +241,6 @@ button:active { transform: scale(0.96); }
    ========================================= */
 @media (max-width: 768px) {
   body { padding: 6px; }
-  .app-header h2 { font-size: 16px; margin-bottom: 8px; }
   
   .app-container {
     display: grid;
@@ -245,8 +276,7 @@ button:active { transform: scale(0.96); }
   .amt-btn { font-size: 12px; padding: 8px 0; }
   
   .dice-display-area { gap: 6px; margin-bottom: 8px; }
-  /* 手機版骰子填入框調整 */
-  .dice-slot { width: 36px; height: 36px; border-radius: 8px; font-size: 16px; }
+  .dice-slot { width: 36px; height: 36px; border-radius: 8px; font-size: 18px; }
   
   .dice-keypad { gap: 6px; }
   .key-btn { font-size: 14px; padding: 10px 0; }

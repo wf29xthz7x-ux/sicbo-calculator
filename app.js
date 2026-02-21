@@ -10,6 +10,7 @@ const state = {
 };
 
 const DOM = {
+  themeToggle: document.getElementById('theme-toggle'),
   balanceDisplay: document.getElementById('balanceDisplay'),
   currentAmount: document.getElementById('currentAmount'),
   betButtons: document.querySelectorAll('#betOptions .bet-btn'),
@@ -27,10 +28,28 @@ const DOM = {
   }
 };
 
-// 工具：數字千分位格式化
 const fmt = (num) => num.toLocaleString('en-US');
 
 function init() {
+  // 1. 主題切換初始化 (使用 ☾ 與 ☀︎)
+  if (document.documentElement.getAttribute('data-theme') === 'dark') {
+    DOM.themeToggle.innerText = '☀︎';
+  }
+
+  DOM.themeToggle.addEventListener('click', () => {
+    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+    if (isDark) {
+      document.documentElement.removeAttribute('data-theme');
+      localStorage.setItem('theme', 'light');
+      DOM.themeToggle.innerText = '☾';
+    } else {
+      document.documentElement.setAttribute('data-theme', 'dark');
+      localStorage.setItem('theme', 'dark');
+      DOM.themeToggle.innerText = '☀︎';
+    }
+  });
+
+  // 2. 其他操作監聽
   DOM.betButtons.forEach(btn => {
     btn.addEventListener('click', (e) => {
       state.selectedBet = e.target.dataset.type;
@@ -65,7 +84,6 @@ function init() {
     }
   });
 
-  // 歷史紀錄手風琴展開 & 刪除事件代理
   DOM.historyList.addEventListener('click', (e) => {
     const summary = e.target.closest('.history-summary');
     if (summary) {
@@ -100,7 +118,6 @@ function updateDiceUI() {
   for (let i = 0; i < 3; i++) {
     const slot = DOM.diceSlots[i];
     if (state.currentDice[i] !== undefined) {
-      // 移除圖示，只顯示數字
       slot.innerText = state.currentDice[i];
       slot.classList.add('filled');
     } else {
