@@ -9,15 +9,6 @@ const state = {
   stats: { totalBets: 0, totalWagered: 0, wins: 0, losses: 0 }
 };
 
-const diceSVGs = {
-  1: '<svg class="dice-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="4"></rect><circle cx="12" cy="12" r="2.5" fill="currentColor" stroke="none"></circle></svg>',
-  2: '<svg class="dice-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="4"></rect><circle cx="8" cy="8" r="1.5" fill="currentColor" stroke="none"></circle><circle cx="16" cy="16" r="1.5" fill="currentColor" stroke="none"></circle></svg>',
-  3: '<svg class="dice-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="4"></rect><circle cx="8" cy="8" r="1.5" fill="currentColor" stroke="none"></circle><circle cx="12" cy="12" r="1.5" fill="currentColor" stroke="none"></circle><circle cx="16" cy="16" r="1.5" fill="currentColor" stroke="none"></circle></svg>',
-  4: '<svg class="dice-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="4"></rect><circle cx="8" cy="8" r="1.5" fill="currentColor" stroke="none"></circle><circle cx="16" cy="8" r="1.5" fill="currentColor" stroke="none"></circle><circle cx="8" cy="16" r="1.5" fill="currentColor" stroke="none"></circle><circle cx="16" cy="16" r="1.5" fill="currentColor" stroke="none"></circle></svg>',
-  5: '<svg class="dice-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="4"></rect><circle cx="8" cy="8" r="1.5" fill="currentColor" stroke="none"></circle><circle cx="16" cy="8" r="1.5" fill="currentColor" stroke="none"></circle><circle cx="12" cy="12" r="1.5" fill="currentColor" stroke="none"></circle><circle cx="8" cy="16" r="1.5" fill="currentColor" stroke="none"></circle><circle cx="16" cy="16" r="1.5" fill="currentColor" stroke="none"></circle></svg>',
-  6: '<svg class="dice-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="4"></rect><circle cx="8" cy="8" r="1.5" fill="currentColor" stroke="none"></circle><circle cx="16" cy="8" r="1.5" fill="currentColor" stroke="none"></circle><circle cx="8" cy="12" r="1.5" fill="currentColor" stroke="none"></circle><circle cx="16" cy="12" r="1.5" fill="currentColor" stroke="none"></circle><circle cx="8" cy="16" r="1.5" fill="currentColor" stroke="none"></circle><circle cx="16" cy="16" r="1.5" fill="currentColor" stroke="none"></circle></svg>'
-};
-
 const DOM = {
   themeToggle: document.getElementById('theme-toggle'),
   balanceDisplay: document.getElementById('balanceDisplay'),
@@ -71,25 +62,22 @@ function init() {
   });
 
   document.getElementById('amountBtns').addEventListener('click', (e) => {
-    const btn = e.target.closest('.amt-btn');
-    if (!btn) return;
-    if (btn.id === 'btnClear') {
-      state.betAmount = 0;
-    } else {
-      state.betAmount += parseInt(btn.dataset.val, 10);
+    if (e.target.classList.contains('amt-btn')) {
+      if (e.target.id === 'btnClear') {
+        state.betAmount = 0;
+      } else {
+        state.betAmount += parseInt(e.target.dataset.val, 10);
+      }
+      DOM.currentAmount.innerText = fmt(state.betAmount);
     }
-    DOM.currentAmount.innerText = fmt(state.betAmount);
   });
 
   document.getElementById('diceKeypad').addEventListener('click', (e) => {
-    const btn = e.target.closest('.key-btn');
-    if (!btn) return;
-    
-    if (btn.dataset.num) {
-      handleDiceInput(parseInt(btn.dataset.num, 10));
-    } else if (btn.id === 'btnDeleteDice') {
+    if (e.target.dataset.num) {
+      handleDiceInput(parseInt(e.target.dataset.num, 10));
+    } else if (e.target.id === 'btnDeleteDice') {
       handleDiceDelete();
-    } else if (btn.id === 'btnSubmit') {
+    } else if (e.target.id === 'btnSubmit') {
       calculateResult();
     }
   });
@@ -108,21 +96,6 @@ function init() {
       removeRecord(deleteBtn);
     }
   });
-
-  // 底部 Credit 淡入偵測邏輯 (Intersection Observer)
-  const creditFooter = document.getElementById('creditFooter');
-  if (creditFooter) {
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          creditFooter.classList.add('show');
-        } else {
-          creditFooter.classList.remove('show');
-        }
-      });
-    }, { threshold: 0.1 });
-    observer.observe(creditFooter);
-  }
 }
 
 function handleDiceInput(num) {
@@ -143,10 +116,10 @@ function updateDiceUI() {
   for (let i = 0; i < 3; i++) {
     const slot = DOM.diceSlots[i];
     if (state.currentDice[i] !== undefined) {
-      slot.innerHTML = diceSVGs[state.currentDice[i]];
+      slot.innerText = state.currentDice[i];
       slot.classList.add('filled');
     } else {
-      slot.innerHTML = '';
+      slot.innerText = '';
       slot.classList.remove('filled');
     }
   }
@@ -217,12 +190,14 @@ function updateGlobalUI() {
   DOM.stats.count.innerText = fmt(state.stats.totalBets);
   DOM.stats.wager.innerText = '$' + fmt(state.stats.totalWagered);
   
-  const winRate = state.stats.totalBets > 0 ? ((state.stats.wins / state.stats.totalBets) * 100).toFixed(1) : 0;
+  // 改為 Math.round() 四捨五入至整數，並移除小數點
+  const winRate = state.stats.totalBets > 0 ? Math.round((state.stats.wins / state.stats.totalBets) * 100) : 0;
   DOM.stats.winrate.innerText = winRate + '%';
   DOM.stats.win.innerText = fmt(state.stats.wins);
   DOM.stats.lose.innerText = fmt(state.stats.losses);
   
-  const roi = state.stats.totalWagered > 0 ? ((state.totalBalance / state.stats.totalWagered) * 100).toFixed(1) : 0;
+  // 改為 Math.round() 四捨五入至整數，並移除小數點
+  const roi = state.stats.totalWagered > 0 ? Math.round((state.totalBalance / state.stats.totalWagered) * 100) : 0;
   DOM.stats.roi.innerText = (roi > 0 ? '+' : '') + roi + '%';
   DOM.stats.roi.className = 'stat-value ' + (roi > 0 ? 'win-text' : (roi < 0 ? 'lose-text' : ''));
 }
@@ -232,8 +207,7 @@ function renderHistoryItem(betType, amount, actualResult, diceStr, profitLoss, i
   if (emptyMsg) emptyMsg.remove();
 
   const time = new Date().toLocaleTimeString('zh-HK', { hour12: false, hour: '2-digit', minute:'2-digit' });
-  // 移除 Emoji，改為乾淨的文字標籤
-  const rollBadgeHTML = hasRollRightStatus ? `<span class="roll-badge">擲骰權</span>` : '';
+  const rollBadgeHTML = hasRollRightStatus ? `<span class="roll-badge">🎲</span>` : '';
   
   const item = document.createElement('div');
   item.className = 'history-item';
